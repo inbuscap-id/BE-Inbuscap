@@ -48,7 +48,7 @@ type Proposal struct {
 	Description   string
 	Nominal       uint64
 	Document      string //dokumen tentang detail usaha lebih lanjut
-	GainedCapital uint64 //dana yang sudah terkumpul
+	Collected     uint64 //dana yang sudah terkumpul
 	InvestorShare uint   //pembagian keuntungan buat investor
 	OwnerShare    uint
 }

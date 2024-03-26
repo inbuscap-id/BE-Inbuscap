@@ -12,13 +12,13 @@ servers:
     url: http://54.169.185.156:8000
 tags:
   - name: user
-    description: Organize Data User
+    description: Organize User Data
   - name: post
-    description: Organize Data post
-  - name: comment
-    description: Organize Data comment
+    description: Organize proposal posting data
+  - name: invest
+    description: Organize Invest Data
 paths:
-  /users:
+  /user:
     post:
       tags:
         - user
@@ -32,27 +32,30 @@ paths:
               type: object
               required:
                 - fullname
-                - username
-                - handphone
                 - email
+                - handphone
                 - password
+                - ktp
               properties:
                 fullname:
                   type: string
-                username:
+                email:
                   type: string
                 handphone:
                   type: string
-                email:
-                  type: string
                 password:
                   type: string
+                ktp:
+                  type: string
+                npwp:
+                  type: string
             example:
-              fullname: "Muhamad Khomsin Ariseno"
-              username: "khomsin.ariseno"
-              handphone: "089512345678"
-              email: "khomsin.ariseno@gmail.com"
-              password: "pass123"
+              fullname: "Muhammad Bagir"
+              email: "bagir3008@gmail.com"
+              handphone: "085912345678"
+              password: "4545"
+              ktp: "3573052004030001"
+              npwp: "123456789003000"
       responses:
         '201':
           description: New User Added Successfully
@@ -62,7 +65,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
               example:
                 code: 201
-                message: "selamat data anda sudah terdaftar"
+                message: "Successful user registration"
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -84,11 +87,12 @@ paths:
               example: 
                 code: 200
                 data:
-                  fullname: "Muhamad Khomsin Ariseno"
-                  username: "khomsin.ariseno"
-                  handphone: "089512345678"
-                  email: "khomsin.ariseno@gmail.com"
-                  biodata: "aku seorang petualang"
+                  fullname: "Muhammad Bagir"
+                  email: "bagir3008@gmail.com"
+                  handphone: "085912345678"
+                  password: "4545"
+                  ktp: "3573052004030001"
+                  npwp: "123456789003000"
                 message: "Successfully Get MyProfile"
         '400':
           $ref: '#/components/responses/400'
@@ -109,32 +113,30 @@ paths:
               type: object
               required:
                 - fullname
-                - username
-                - handphone
                 - email
+                - handphone
                 - password
+                - ktp
               properties:
                 fullname:
                   type: string
-                username:
+                email:
                   type: string
                 handphone:
                   type: string
-                email:
+                password:
                   type: string
-                oldPassword:
+                ktp:
                   type: string
-                newPassword:
-                  type: string
-                biodata:
+                npwp:
                   type: string
             example:
-              fullname: "Muhamad Khomsin Ariseno"
-              username: "khomsin.ariseno"
-              handphone: "089512345678"
-              email: "khomsin.ariseno@gmail.com"
-              password: "password123"
-              biodata: "aku seorang petualang"
+              fullname: "Muhammad Bagir"
+              email: "bagir3008@gmail.com"
+              handphone: "085912345678"
+              password: "pass12345"
+              ktp: "3573052004030001"
+              npwp: "123456789003000"
       responses:
         '200':
           description: "Update Data Successfully"
@@ -144,7 +146,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
               example: 
                 code : 200
-                message: "success update user"
+                message: "successfully updated user"
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -173,8 +175,8 @@ paths:
     post:
       tags:
         - user
-      summary: Login Using HP or email or username and Password
-      description: Input Your HP, email, or username and Password
+      summary: Login Using HP or email and Password
+      description: Input HP or email and Password
       requestBody:
         required: true
         content:
@@ -187,8 +189,8 @@ paths:
                 password:
                   type: string
             example:
-              email: "khomsin.ariseno@gmail.com"
-              password: "pass123"
+              email: "bagir3008@gmail.com"
+              password: "pass12345"
       responses:
         '200':
           description: "Login Successfully"
@@ -220,20 +222,43 @@ paths:
           multipart/form-data:
             schema:
               type: object
+              required:
+                # - image
+                - title
+                - description
+                - capital
+                - proposal
               properties:
                 image:
                   type: string
                   format: binary
-                caption:
+                title:
                   type: string
+                description:
+                  type: string
+                capital:
+                  type: integer
+                proposal:
+                  type: string
+                  format: binary    
           application/json:
             schema:
               type: object
+              required:
+                - title
+                - description
+                - capital
               properties:
-                caption:
+                title:
                   type: string
+                description:
+                  type: string
+                capital:
+                  type: integer
             example:
-              caption: "jalan-jalan dulu gaes"
+              title: "Inbuscap.id"
+              description: "saya akan menciptakan lapangan bisnis yang meliputi sekrot ..."
+              capital: 15000000
       responses:
         '201':
           description: "New Post Added Successfully"
@@ -262,8 +287,8 @@ paths:
           schema:
             type: integer
           description: halaman yang ingin ditampilkan
-      summary: See Posts
-      description: See Posts
+      summary: See All Posts
+      description: See All Posts
       responses:
         '200':
           description: "Successfully See Posts"
@@ -275,20 +300,26 @@ paths:
                 code: 200
                 data:
                   - id: 1
-                    username: "onesira" 
-                    created_at: "2024-03-17T08:19:25.479Z"
-                    image: "urlfoto/1"
-                    caption: "kita lagi di pantai nih gaes"
+                    fullname: "Muhammad Bagir"
+                    title: "Inbuscap.id"
+                    image: "http://... .com"
+                    description: "saya akan menciptakan lapangan bisnis yang meliputi sekrot ..."
+                    capital: 15000000
+                    collected: 5000000
                   - id: 2
-                    username: "gerytrap" 
-                    created_at: "2024-03-17T08:19:25.479Z"
-                    image: ""
-                    caption: "kita mabar dulu ga si"
+                    fullname: "Malik"
+                    title: "Perternakan Sapi"
+                    image: "http://... .com"
+                    description: "saya akan menciptakan lapangan bisnis yang meliputi sekrot ..."
+                    capital: 50000000
+                    collected: 5000000
                   - id: 3
-                    username: "sin"
-                    created_at: "2024-03-17T08:19:25.479Z"
-                    image: "urlfoto/3"
-                    caption: ""
+                    fullname: "Ade Prastyo"
+                    title: "Cafe Loop"
+                    image: "http://... .com"
+                    description: "saya akan menciptakan cafe yang akan ..."
+                    capital: 15000000
+                    collected: 0
                 message: "Successfully See Posts"
         '400':
           $ref: '#/components/responses/400'
@@ -301,12 +332,12 @@ paths:
       parameters:
         - name: postID
           in: path
-          description: ID post yang ingin di hapus
+          description: ID post yang ingin di ubah
           required: true
           schema:
             type: string
           example: 1
-      summary: See Post With Comments
+      summary: See Detail Post
       responses:
         '200':
           description: "Successfully See Post With Comments"
@@ -318,17 +349,14 @@ paths:
                 code : 200
                 data:
                   id: 1
-                  username: onesira
-                  created_at: "2024-03-17T08:19:25.479Z"
-                  image: "urlfoto/1"
-                  caption: "kita lagi di pantai nih gaes"
-                  comments:
-                  - username: "user1"
-                    comment: "isi komennya"
-                    created_at: "2024-10-10"
-                  - username: "user2"
-                    comment: "komentar"
-                    created_at: "2024-10-10"
+                  fullname: "Muhammad Bagir"
+                  title: "Inbuscap.id"
+                  image: "http://... .com"
+                  description: "saya akan menciptakan lapangan bisnis yang meliputi sekrot ..."
+                  capital: 15000000
+                  collected: 5000000
+                  profit: 10
+                  proposal: "http://... .com"
                 message: "Successfully Get Post With Comment"
         '400':
           $ref: '#/components/responses/400'
@@ -384,20 +412,43 @@ paths:
           multipart/form-data:
             schema:
               type: object
+              required:
+                # - image
+                - title
+                - description
+                - capital
+                - proposal
               properties:
                 image:
                   type: string
                   format: binary
-                caption:
+                title:
                   type: string
+                description:
+                  type: string
+                capital:
+                  type: integer
+                proposal:
+                  type: string
+                  format: binary
           application/json:
             schema:
               type: object
+              required:
+                - title
+                - description
+                - capital
               properties:
-                caption:
+                title:
                   type: string
+                description:
+                  type: string
+                capital:
+                  type: integer
             example:
-              caption: "jalan-jalan dulu gaes"
+              title: "Inbuscap.id"
+              description: "saya akan menciptakan lapangan bisnis yang meliputi sekrot ..."
+              capital: 15000000
       responses:
         '200':
           description: "Successfully Edit Post"
@@ -412,13 +463,13 @@ paths:
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
-  /comments:
+  /invest:
     post:
       tags:
-        - comment
+        - invest
       security:
         - bearerAuth: []
-      summary: Create a comment
+      summary: Send capital
       requestBody:
         required: true
         content:
@@ -427,54 +478,53 @@ paths:
               type: object
               required:
                 - post_id
-                - comment
+                - nominal
               properties:
                 post_id:
                   type: integer
-                comment:
-                  type: string
+                nominal:
+                  type: integer
             example:
               post_id: 1
-              comment: "wkwkkw lucu banget guss"
+              nominal: 5000000
       responses:
-        '201':
-          description: "Successfully Add Comment"
+        '200':
+          description: "successfully sent capital"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
               example: 
                 code : 201
-                message: "Successfully Add Comment"
+                message: "successfully sent capital"
         '400':
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
-  /comments/{commentID}:
     delete:
       tags:
-        - comment
-      security:
-        - bearerAuth: []
+        - invest
       parameters: 
-        - name: commentID
-          in: path
-          description: ID comment yang ingin di hapus
+        - name: postid
+          in: query
+          description: ID post yang mau di tarik
           required: true
           schema:
             type: string
           example: 1
-      summary: Delete Comment
+      security:
+        - bearerAuth: []
+      summary: Cancel sending capital
       responses:
         '200':
-          description: "Successfully Delete Comment"
+          description: "successfully canceled the capital transfer"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
               example:
                 code: 200
-                message: "Successfully Delete Comment"
+                message: "successfully canceled the capital transfer"
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -520,7 +570,7 @@ components:
             $ref: '#/components/schemas/ApiResponse'
           example: 
             code: 201
-            message: "Congratulations, the data has been registered"
+            message: "successfully sent data"
     '400':
       description: "Bad Required"
       content:
