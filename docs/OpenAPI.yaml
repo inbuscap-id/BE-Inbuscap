@@ -13,10 +13,12 @@ servers:
 tags:
   - name: user
     description: Organize User Data
-  - name: post
+  - name: proposal
     description: Organize proposal posting data
-  - name: invest
+  - name: investment
     description: Organize Invest Data
+  - name: verification
+    description: Organize verification for admin
 paths:
   /user:
     post:
@@ -201,17 +203,17 @@ paths:
               example: 
                 code: 200
                 data:
-                  name: "Muhamad Khomsin Ariseno"
+                  fullname: "Muhamad Khomsin Ariseno"
                   token: "abogoboga_12sfqQSF008@yuhuu"
                 message: "Login Successfully"
         '400':
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'    
-  /posts:
+  /proposals:
     post:
       tags:
-        - post
+        - proposal
       security:
         - bearerAuth: []
       summary: Add New Post
@@ -275,7 +277,7 @@ paths:
           $ref: '#/components/responses/500'
     get:
       tags:
-        - post
+        - proposal
       parameters:
         - in: query
           name: username
@@ -287,11 +289,11 @@ paths:
           schema:
             type: integer
           description: halaman yang ingin ditampilkan
-      summary: See All Posts
-      description: See All Posts
+      summary: See All Proposals
+      description: See All Proposals
       responses:
         '200':
-          description: "Successfully See Posts"
+          description: "Successfully See Proposals"
           content:
             application/json:
               schema:
@@ -320,17 +322,21 @@ paths:
                     description: "saya akan menciptakan cafe yang akan ..."
                     capital: 15000000
                     collected: 0
-                message: "Successfully See Posts"
+                message: "Successfully See Proposals"
+                pagination:
+                  page: 1
+                  pagesize: 10
+                  total_pages: 1
         '400':
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
-  /posts/{postID}:
+  /proposals/{postID}:
     get:
       tags:
-        - post
+        - proposal
       parameters:
-        - name: postID
+        - name: proposals_id
           in: path
           description: ID post yang ingin di ubah
           required: true
@@ -364,7 +370,7 @@ paths:
           $ref: '#/components/responses/500'
     delete:
       tags:
-        - post
+        - proposal
       security:
         - bearerAuth: []
       parameters: 
@@ -393,7 +399,7 @@ paths:
           $ref: '#/components/responses/500'
     put:
       tags:
-        - post
+        - proposal
       security:
         - bearerAuth: []
       parameters: 
@@ -463,10 +469,109 @@ paths:
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
-  /invest:
+    
     post:
       tags:
-        - invest
+        - proposal
+      security:
+        - bearerAuth: []
+      summary: Add New Business report and profit share, deducted from wallet
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                # - image
+                - date
+                - document
+                - amount
+              properties:
+                date:
+                  type: string
+                document:
+                  type: string
+                  format: binary
+                amount:
+                  type: integer
+
+      responses:
+        '201':
+          description: "New Report Added Successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example:
+                code: 201
+                message: "New Report Added Successfully"
+                data:
+                  id: 1
+                  title: "Perternakan"
+                  date: "02/08/2024"
+                  document: "http://... report.pdf"
+                  amount: 1000000
+
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'    
+  /investments:
+    get:
+      tags:
+        - investment
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: halaman yang ingin ditampilkan
+      summary: See All Invested Proposals
+      description: See All Invested Proposals
+      responses:
+        '200':
+          description: "Successfully See Proposals"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataArrayResponse'
+              example:
+                code: 200
+                data:
+                  - id: 1
+                    fullname: "Muhammad Bagir"
+                    title: "Inbuscap.id"
+                    image: "http://... .com"
+                    description: "saya akan menciptakan lapangan bisnis yang meliputi sekrot ..."
+                    capital: 15000000
+                    collected: 5000000
+                  - id: 2
+                    fullname: "Malik"
+                    title: "Perternakan Sapi"
+                    image: "http://... .com"
+                    description: "saya akan menciptakan lapangan bisnis yang meliputi sekrot ..."
+                    capital: 50000000
+                    collected: 5000000
+                  - id: 3
+                    fullname: "Ade Prastyo"
+                    title: "Cafe Loop"
+                    image: "http://... .com"
+                    description: "saya akan menciptakan cafe yang akan ..."
+                    capital: 15000000
+                    collected: 0
+                message: "Successfully See Proposals"
+                pagination:
+                  page: 1
+                  pagesize: 10
+                  total_pages: 1
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+        - investment
       security:
         - bearerAuth: []
       summary: Send capital
@@ -488,7 +593,7 @@ paths:
               post_id: 1
               nominal: 5000000
       responses:
-        '200':
+        '201':
           description: "successfully sent capital"
           content:
             application/json:
@@ -503,7 +608,7 @@ paths:
           $ref: '#/components/responses/500'
     delete:
       tags:
-        - invest
+        - investment
       parameters: 
         - name: postid
           in: query
@@ -529,6 +634,357 @@ paths:
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
+  /investments/{proposals_id}:
+    get:
+      tags:
+        - investment
+      parameters:
+        - name: proposals_id
+          in: path
+          description: ID proposal yang ingin di lihat
+          required: true
+          schema:
+            type: string
+          example: 1
+      summary: See Detail invested proposal
+      responses:
+        '200':
+          description: "Successfully retrieved invested proposal "
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code : 200
+                data:
+                  id: 1
+                  fullname: "Muhammad Bagir"
+                  title: "Inbuscap.id"
+                  image: "http://... .com"
+                  description: "saya akan menciptakan lapangan bisnis yang meliputi sekrot ..."
+                  capital: 15000000
+                  collected: 15000000
+                  profit: 10
+                  proposal: "http://... .com"
+                  investment: 5000000
+                message: Successfully retrieved invested proposal
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /verifications:
+    post:
+      tags:
+        - verification
+      summary: Send capital
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - user_id
+              - photo_ktp
+              - photo_npwp
+              - photo_selfie
+              properties:
+                user_id:
+                  type: integer
+                photo_ktp:
+                 type: string
+                 format: binary
+                photo_npwp:
+                 type: string
+                 format: binary
+                photo_selfie:
+                  type:  string
+                  format: binary
+          
+      responses:
+        '201':
+          description: "request was created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example: 
+                code : 201
+                message: "request was created successfully"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    get:
+      tags:
+        - verification
+      security:
+        - bearerAuth: []
+      summary: Get pending verifications
+          
+      responses:
+        '200':
+          description: "verification requests retrieved"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataArrayResponse'
+              example: 
+                code : 200
+                message:  "verification requests retrieved"
+                data:
+                  - id: 1
+                    fullname: "Alibaba"
+                  - id: 2
+                    fullname: "Saitama"
+                  - id: 3
+                    fullname: "Samuel Alexander Pieter"
+                pagination:
+                  page: 1
+                  pagesize: 10
+                  total_pages: 1
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /verifications/{user_id}:
+    get:
+      tags:
+        - verification
+      parameters:
+        - name: user_id
+          in: path
+          description: ID verif/ ID user yang ingin di lihat
+          required: true
+          schema:
+            type: string
+          example: 1 
+      security:
+        - bearerAuth: []
+      summary: Get pending verification
+      responses:
+        '200':
+          description: "verification request retrieved"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code : 200
+                message:  "verification request retrieved"
+                data:
+                  - id: 1
+                    fullname: "Alibaba"
+                    photo_ktp: "uploads/image.jpg"
+                    photo_npwp: "uploads/image.jpg"
+                    photo_selfie: "uploads/image.jpg"
+                    ktp: "3623074107640027"
+                    npwp: "3623074107640027"
+                    phone: "085912345678" #ditanyakan nanti, butuh ini nggak kalo kalo user bad upload
+
+                    is_active: false
+
+
+
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'    
+    put: 
+      tags:
+        - verification
+      parameters:
+        - name: user_id
+          in: path
+          description: ID verif/ ID user yang ingin di edit
+          required: true
+          schema:
+            type: string
+          example: 1 
+      security:
+        - bearerAuth: []
+      summary: "verify the user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                is_active: 
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: "behasil mengubah data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code : 200
+                message: "berhasil mengubah data"
+                data:
+                  - id: 1
+                    fullname: "Alibaba"
+                    photo_ktp: "uploads/image.jpg"
+                    photo_npwp: "uploads/image.jpg"
+                    photo_selfie: "uploads/image.jpg"
+                    ktp: "3623074107640027"
+                    npwp: "3623074107640027"
+                    phone: "085912345678" #ditanyakan nanti, butuh ini nggak kalo kalo user bad upload
+
+                    is_active: true
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /transactions/returns:
+    get:
+      tags:
+        - transaction
+      security:
+        - bearerAuth: []
+      summary: Get available returns from investment
+
+      responses:
+        '200':
+          description: "Returns retrieved successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataArrayResponse'
+              example:
+                code: 200
+                message: "Returns retrieved successfully"
+                data:
+                  - id: 1
+                    title: "Perternakan"
+                    date: "02/08/2024"
+                    document: "http://... report.pdf"
+                    amount: 200000
+                  - id: 2
+                    title: "Ayam Geprek"
+                    date: "02/08/2024"
+                    document: "http://... report.pdf"
+                    amount: 150000
+                  - id: 3
+                    title: "Teh Earl Black"
+                    date: "02/08/2024"
+                    document: "http://... report.pdf"
+                    amount: 300000
+
+
+                pagination:
+                  page: 1
+                  pagesize: 10
+                  total_pages: 1
+
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'    
+  /transactions/topup:
+    post:
+      tags:
+        - transaction
+      security:
+        - bearerAuth: []
+      summary: Send capital
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - payment_type
+                - nominal
+              properties:
+                payment_type:
+                  type: integer
+                nominal:
+                  type: integer
+            example:
+              payment_type: "bca"
+              nominal: 5000000
+      responses:
+        '201':
+          description: "successfully placed order"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code : 201
+                message: "successfully placed order"
+                data:
+                  transaction_id: "9aed5972-5b6a-401e-894b-a32c91ed1a3a"
+                  order_id: "1466323342"
+                  gross_amount: "20000.00"
+                  payment_type: "bank_transfer"
+                  transaction_time: "2016-06-19 15:02:22"
+                  transaction_status: "pending"
+                  va_numbers: [
+                    {
+                     "bank": "bca",
+                     "va_number": "91019021579"
+                     }
+                  ]
+                  fraud_status: "accept"
+                  currency: "IDR"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /transactions/withdraw:
+    post:
+      tags:
+        - transaction
+      security:
+        - bearerAuth: []
+      summary: Send capital
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - bank
+                - bank_account
+                - nominal
+              properties:
+                bank: 
+                  type: string
+                bank_account:
+                  type: integer
+                nominal:
+                  type: integer
+            example:
+              bank: "bca"
+              bank_account: 0011223344
+              nominal: 5000000
+      responses:
+        '201':
+          description: "successfully creates request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example: 
+                code : 201
+                message: "successfully creates request"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+      
+
 components:
   schemas:
     ApiResponse:
@@ -561,6 +1017,16 @@ components:
           type: array
           items:
             type: object
+        pagination:
+         type: object
+         properties:
+          page:
+            type: integer
+          pagesize:
+            type: integer
+          total_pages:
+            type: integer
+
   responses:
     '201':
       description: "success registered"
@@ -590,6 +1056,15 @@ components:
                     type: string
               example:
                 message: "invalid or expired jwt"
+    '404':
+      description: "data tidak ditemukan"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example: 
+            code: 404
+            message: "data tidak ditemukan"
     '500':
       description: "server error"
       content:
