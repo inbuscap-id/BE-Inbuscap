@@ -4,6 +4,7 @@ import (
 	"BE-Inbuscap/features/user"
 	"BE-Inbuscap/helper"
 	"errors"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -27,7 +28,7 @@ func (m *model) Register(newData user.User) error {
 
 func (m *model) Login(input string) (user.User, error) {
 	var result user.User
-	err := m.connection.Where("username = ? OR email = ? OR handphone = ?", input, input, input).First(&result).Error
+	err := m.connection.Where("email = ? OR handphone = ?", input, input).First(&result).Error
 	return result, err
 }
 
@@ -42,17 +43,17 @@ func (m *model) Update(data user.User) error {
 	if data.Fullname != "" {
 		selectUpdate = append(selectUpdate, "fullname")
 	}
-	if data.Username != "" {
-		selectUpdate = append(selectUpdate, "username")
-	}
 	if data.Email != "" {
 		selectUpdate = append(selectUpdate, "email")
 	}
 	if data.Handphone != "" {
 		selectUpdate = append(selectUpdate, "handphone")
 	}
-	if data.Biodata != "" {
-		selectUpdate = append(selectUpdate, "biodata")
+	if data.KTP != "" {
+		selectUpdate = append(selectUpdate, "ktp")
+	}
+	if data.NPWP != "" {
+		selectUpdate = append(selectUpdate, "npwp")
 	}
 	if data.Password != "" {
 		selectUpdate = append(selectUpdate, "password")
@@ -72,6 +73,13 @@ func (m *model) Update(data user.User) error {
 }
 
 func (m *model) Delete(id string) error {
+	if query := m.connection.Table("users").Where("id = ?", id).Select("email", "handphone", "ktp", "npwp").Updates(user.User{Email: "", Handphone: "", KTP: "", NPWP: ""}); query.Error != nil {
+		fmt.Println(query.Error)
+		return errors.New(helper.ErrorDatabaseNotFound)
+	} else {
+		fmt.Println(query.RowsAffected)
+	}
+	fmt.Println("23e2")
 	if query := m.connection.Where("id = ?", id).Delete(&user.User{}); query.Error != nil {
 		return errors.New(helper.ErrorGeneralDatabase)
 	} else if query.RowsAffected == 0 {

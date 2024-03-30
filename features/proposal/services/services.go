@@ -1,17 +1,17 @@
 package services
 
 import (
-	"BE-Inbuscap/features/post"
+	"BE-Inbuscap/features/proposal"
 
 	"github.com/go-playground/validator/v10"
 )
 
 type services struct {
-	m post.Model
+	m proposal.Model
 	v *validator.Validate
 }
 
-func Service(model post.Model) post.Services {
+func Service(model proposal.Model) proposal.Services {
 	return &services{
 		m: model,
 		v: validator.New(),

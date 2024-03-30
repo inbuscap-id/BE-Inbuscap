@@ -1,7 +1,7 @@
 package data
 
 import (
-	post "BE-Inbuscap/features/post"
+	"BE-Inbuscap/features/proposal"
 
 	"gorm.io/gorm"
 )
@@ -10,7 +10,7 @@ type model struct {
 	connection *gorm.DB
 }
 
-func New(db *gorm.DB) post.Model {
+func New(db *gorm.DB) proposal.Model {
 	return &model{
 		connection: db,
 	}

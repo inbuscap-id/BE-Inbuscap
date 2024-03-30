@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"BE-Inbuscap/features/post"
+	"BE-Inbuscap/features/proposal"
 	"BE-Inbuscap/helper"
 	"net/http"
 
@@ -9,10 +9,10 @@ import (
 )
 
 type controller struct {
-	s post.Services
+	s proposal.Services
 }
 
-func NewHandler(service post.Services) post.Controller {
+func NewHandler(service proposal.Services) proposal.Controller {
 	return &controller{
 		s: service,
 	}
