@@ -30,11 +30,7 @@ func NewService(m user.Model) user.Service {
 func (s *service) Register(register_data user.Register) error {
 	// Check Validate
 	var validate user.Register
-	validate.Fullname = register_data.Fullname
-	validate.Username = register_data.Username
-	validate.Email = register_data.Email
-	validate.Handphone = register_data.Handphone
-	validate.Password = register_data.Password
+	helper.ConvertStruct(&register_data, &validate)
 	err := s.v.Struct(&validate)
 	if err != nil {
 		return errors.New(helper.ErrorInvalidValidate)
@@ -46,16 +42,12 @@ func (s *service) Register(register_data user.Register) error {
 		return errors.New(helper.ErrorGeneralServer)
 	}
 
-	user_data := user.User{
-		Fullname:  register_data.Fullname,
-		Username:  register_data.Username,
-		Handphone: register_data.Handphone,
-		Email:     register_data.Email,
-		Password:  newPassword,
-	}
+	var new_user user.User
+	helper.ConvertStruct(&register_data, &new_user)
+	new_user.Password = newPassword
 
 	// Do Register
-	err = s.model.Register(user_data)
+	err = s.model.Register(new_user)
 	if err != nil {
 		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
 			return errors.New(mysqlErr.Message)
@@ -66,35 +58,26 @@ func (s *service) Register(register_data user.Register) error {
 	return nil
 }
 
-func (s *service) Login(login_data user.User) (user.LoginResponse, error) {
+func (s *service) Login(login_data user.User) (string, error) {
 	// Do Login & Get Password
 	dbData, err := s.model.Login(login_data.Email)
 	if err != nil {
-		return user.LoginResponse{}, errors.New(helper.ErrorDatabaseNotFound)
+		return "", errors.New(helper.ErrorDatabaseNotFound)
 	}
 
 	// Compare Password
 	if err := s.pm.ComparePassword(login_data.Password, dbData.Password); err != nil {
-		return user.LoginResponse{}, errors.New(helper.ErrorUserCredential)
+		return "", errors.New(helper.ErrorUserCredential)
 	}
 
 	// Create Token
-	token, err := middlewares.GenerateJWT(strconv.Itoa(int(dbData.ID)), dbData.Username)
+	token, err := middlewares.GenerateJWT(strconv.Itoa(int(dbData.ID)))
 	if err != nil {
-		return user.LoginResponse{}, errors.New(helper.ErrorGeneralServer)
+		return "", errors.New(helper.ErrorGeneralServer)
 	}
 
 	// Finished
-	var result user.LoginResponse
-	result.CreatedAt = dbData.CreatedAt.UTC()
-	result.UpdatedAt = dbData.UpdatedAt.UTC()
-	result.Email = dbData.Email
-	result.Fullname = dbData.Fullname
-	result.Username = dbData.Username
-	result.Handphone = dbData.Handphone
-	result.Biodata = dbData.Biodata
-	result.Token = token
-	return result, nil
+	return token, nil
 }
 
 func (s *service) Profile(token *jwt.Token) (user.User, error) {
@@ -119,18 +102,11 @@ func (s *service) Update(token *jwt.Token, update_data user.User) error {
 
 	// Check Validate Password & Others
 	var validate user.Update
-	validate.Fullname = update_data.Fullname
-	validate.Username = update_data.Username
-	validate.Email = update_data.Email
-	validate.Handphone = update_data.Handphone
-	validate.Password = update_data.Password
+	helper.ConvertStruct(&update_data, &validate)
 	err := s.v.Struct(&validate)
 	if err != nil {
 		if strings.Contains(err.Error(), "Fullname") {
 			update_data.Fullname = ""
-		}
-		if strings.Contains(err.Error(), "Username") {
-			update_data.Username = ""
 		}
 		if strings.Contains(err.Error(), "Email") {
 			update_data.Email = ""
@@ -141,8 +117,11 @@ func (s *service) Update(token *jwt.Token, update_data user.User) error {
 		if strings.Contains(err.Error(), "Password") {
 			update_data.Password = ""
 		}
-		if update_data.Biodata == "" && strings.Count(err.Error(), "\n") >= 4 {
-			return errors.New(helper.ErrorInvalidValidate)
+		if strings.Contains(err.Error(), "ktp") {
+			update_data.KTP = ""
+		}
+		if strings.Contains(err.Error(), "npwp") {
+			update_data.NPWP = ""
 		}
 	}
 

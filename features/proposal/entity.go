@@ -1,4 +1,4 @@
-package post
+package proposal
 
 import (
 	"github.com/labstack/echo/v4"

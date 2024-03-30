@@ -60,7 +60,7 @@ func (ct *controller) Login() echo.HandlerFunc {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
 
-		return c.JSON(helper.ResponseFormat(http.StatusOK, "Login Successfully", usertoken))
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "Login Successfully", map[string]any{"token": usertoken}))
 	}
 }
 
@@ -77,13 +77,7 @@ func (ct *controller) Profile() echo.HandlerFunc {
 		}
 
 		var profileResponse ProfileResponse
-		profileResponse.CreatedAt = profile.CreatedAt
-		profileResponse.UpdatedAt = profile.UpdatedAt
-		profileResponse.Fullname = profile.Fullname
-		profileResponse.Username = profile.Username
-		profileResponse.Email = profile.Email
-		profileResponse.Handphone = profile.Handphone
-		profileResponse.Biodata = profile.Biodata
+		helper.ConvertStruct(&profile, &profileResponse)
 
 		return c.JSON(helper.ResponseFormat(http.StatusOK, "Successfully Get MyProfile", profileResponse))
 	}

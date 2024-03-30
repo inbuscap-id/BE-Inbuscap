@@ -14,11 +14,12 @@ type LoginResponse struct {
 }
 
 type ProfileResponse struct {
-	CreatedAt time.Time `json:"created_at" form:"created_at"`
-	UpdatedAt time.Time `json:"updated_at" form:"updated_at"`
-	Fullname  string    `json:"fullname" form:"fullname"`
-	Username  string    `json:"username" form:"username"`
-	Handphone string    `json:"handphone" form:"handphone"`
-	Email     string    `json:"email" form:"email"`
-	Biodata   string    `json:"biodata" form:"biodata"`
+	CreatedAt  time.Time `json:"created_at" form:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at" form:"updated_at"`
+	Fullname   string    `json:"fullname" form:"fullname"`
+	Email      string    `json:"email" form:"email"`
+	Handphone  string    `json:"handphone" form:"handphone"`
+	KTP        string    `json:"ktp" form:"ktp"`
+	NPWP       string    `json:"npwp" form:"npwp"`
+	IsVerified bool      `json:"isverified" form:"isverified"`
 }
