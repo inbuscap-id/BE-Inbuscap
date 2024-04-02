@@ -7,13 +7,14 @@ import (
 )
 
 type AppConfig struct {
-	DBUsername          string
-	DBPassword          string
-	DBPort              string
-	DBHost              string
-	DBName              string
-	CLOUDINARY_URL      string
-	MIDTRANS_SERVER_KEY string
+	DBUsername            string
+	DBPassword            string
+	DBPort                string
+	DBHost                string
+	DBName                string
+	Cloudinary_API_Key    string
+	Cloudinary_API_Secret string
+	MIDTRANS_SERVER_KEY   string
 }
 
 var JWTSECRET = ""
@@ -51,8 +52,13 @@ func AssignEnv(c AppConfig) (AppConfig, bool) {
 	} else {
 		missing = true
 	}
-	if val, found := os.LookupEnv("CLOUDINARY_URL"); found {
-		c.CLOUDINARY_URL = val
+	if val, found := os.LookupEnv("Cloudinary_API_Key"); found {
+		c.Cloudinary_API_Key = val
+	} else {
+		missing = true
+	}
+	if val, found := os.LookupEnv("Cloudinary_API_Secret"); found {
+		c.Cloudinary_API_Secret = val
 	} else {
 		missing = true
 	}
