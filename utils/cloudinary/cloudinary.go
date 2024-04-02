@@ -1,6 +1,7 @@
 package config
 
 import (
+	"BE-Inbuscap/config"
 	"context"
 	"log"
 	"mime/multipart"
@@ -15,8 +16,8 @@ func UploadImage(image *multipart.FileHeader) (string, error) {
 		return "", err
 	}
 	defer src.Close()
-
-	cld, err := cloudinary.NewFromURL("cloudinary://641886961486146:HylqIrzq6ZTtaqzzbScWz5v9-aM@dajfvp3yw")
+	url := config.InitConfig().CLOUDINARY_URL
+	cld, err := cloudinary.NewFromURL(url)
 	if err != nil {
 		log.Println("error connecting to cloudinary:", err.Error())
 		return "", err

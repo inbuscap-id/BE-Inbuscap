@@ -7,11 +7,13 @@ import (
 )
 
 type AppConfig struct {
-	DBUsername string
-	DBPassword string
-	DBPort     string
-	DBHost     string
-	DBName     string
+	DBUsername          string
+	DBPassword          string
+	DBPort              string
+	DBHost              string
+	DBName              string
+	CLOUDINARY_URL      string
+	MIDTRANS_SERVER_KEY string
 }
 
 var JWTSECRET = ""
@@ -43,11 +45,23 @@ func AssignEnv(c AppConfig) (AppConfig, bool) {
 	} else {
 		missing = true
 	}
+
+	if val, found := os.LookupEnv("MIDTRANS_SERVER_KEY"); found {
+		c.MIDTRANS_SERVER_KEY = val
+	} else {
+		missing = true
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_URL"); found {
+		c.CLOUDINARY_URL = val
+	} else {
+		missing = true
+	}
 	if val, found := os.LookupEnv("JWT_SECRET"); found {
 		JWTSECRET = val
 	} else {
 		missing = true
 	}
+
 	return c, missing
 }
 
