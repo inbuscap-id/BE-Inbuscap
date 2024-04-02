@@ -4,18 +4,20 @@ import (
 	"BE-Inbuscap/config"
 	invest "BE-Inbuscap/features/invest"
 	proposal "BE-Inbuscap/features/proposal"
+	"BE-Inbuscap/features/transaction"
 	user "BE-Inbuscap/features/user"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
-func InitRoute(c *echo.Echo, uc user.Controller, pc proposal.Controller, cc invest.Controller) {
+func InitRoute(c *echo.Echo, uc user.Controller, pc proposal.Controller, cc invest.Controller, tc transaction.Controller) {
 	config := echojwt.WithConfig(echojwt.Config{SigningKey: []byte(config.JWTSECRET)})
 
 	userRoute(c, uc, config)
 	proposalRoute(c, pc, config)
 	investRoute(c, cc, config)
+	transactionRoute(c, tc, config)
 }
 
 func userRoute(c *echo.Echo, uc user.Controller, config echo.MiddlewareFunc) {
@@ -36,5 +38,10 @@ func proposalRoute(c *echo.Echo, pc proposal.Controller, config echo.MiddlewareF
 
 func investRoute(c *echo.Echo, cc invest.Controller, config echo.MiddlewareFunc) {
 	// c.POST("/invests", cc.Create(), config)
+	// c.DELETE("/invests/:investID", cc.Delete(), config)
+}
+
+func transactionRoute(c *echo.Echo, cc transaction.Controller, config echo.MiddlewareFunc) {
+	c.POST("/transactions/topup", cc.AddTransaction(), config)
 	// c.DELETE("/invests/:investID", cc.Delete(), config)
 }
