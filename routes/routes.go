@@ -27,11 +27,12 @@ func userRoute(c *echo.Echo, uc user.Controller, config echo.MiddlewareFunc) {
 }
 
 func proposalRoute(c *echo.Echo, pc proposal.Controller, config echo.MiddlewareFunc) {
-	// c.POST("/posts", pc.Create(), config)
-	// c.PUT("/posts/:postID", pc.Edit(), config)
-	// c.GET("/posts", pc.Posts())
-	// c.GET("/posts/:postID", pc.PostById())
-	// c.DELETE("/posts/:postID", pc.Delete(), config)
+	c.POST("/proposals", pc.Create(), config)
+	c.PUT("/proposals/:proposal_id", pc.Update(), config)
+	c.GET("/proposals", pc.GetAll())
+	c.GET("/proposals/:proposal_id", pc.GetDetail())
+	c.DELETE("/proposals/:proposal_id", pc.Delete(), config)
+	// c.POST("/proposals/:proposal_id", pc.Create(), config)
 }
 
 func investRoute(c *echo.Echo, cc invest.Controller, config echo.MiddlewareFunc) {
