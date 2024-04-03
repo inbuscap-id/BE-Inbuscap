@@ -22,15 +22,23 @@ func NewHandler(s user.Service) user.Controller {
 
 func (ct *controller) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var input user.Register
-		err := c.Bind(&input)
+
+		var data RegisterRequest
+		err := c.Bind(&data)
 		if err != nil {
 			if strings.Contains(err.Error(), "unsupport") {
 				return c.JSON(helper.ResponseFormat(http.StatusUnsupportedMediaType, helper.ErrorUserInputFormat))
 			}
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
 		}
-
+		var input = user.Register{
+			Fullname:  data.Fullname,
+			Email:     data.Email,
+			Handphone: data.Handphone,
+			KTP:       data.KTP,
+			NPWP:      data.NPWP,
+			Password:  data.Password,
+		}
 		err = ct.service.Register(input)
 		if err != nil {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))

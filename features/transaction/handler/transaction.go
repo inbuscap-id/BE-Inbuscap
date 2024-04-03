@@ -3,6 +3,7 @@ package handler
 import (
 	"BE-Inbuscap/features/transaction"
 	"BE-Inbuscap/helper"
+	"log"
 	"net/http"
 	"strings"
 
@@ -24,7 +25,8 @@ func New(s transaction.Service) transaction.Controller {
 func (at *TransactionHandler) AddTransaction() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input = new(TransactionReq)
-		if err := c.Bind(input); err != nil {
+		if err := c.Bind(&input); err != nil {
+			log.Println(err.Error())
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
 
 		}
@@ -36,6 +38,8 @@ func (at *TransactionHandler) AddTransaction() echo.HandlerFunc {
 				return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorGeneralDatabase))
 
 			}
+			log.Println(err.Error())
+
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorDatabaseNotFound))
 
 		}

@@ -56,7 +56,7 @@ type Transaction struct {
 	OrderID string `gorm:"primarykey"`
 	UserID  uint
 
-	Amount float64
+	Amount int
 	Status string
 	Token  string
 	Url    string

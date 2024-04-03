@@ -5,6 +5,7 @@ import (
 	"BE-Inbuscap/helper"
 	"BE-Inbuscap/middlewares"
 	"errors"
+	"log"
 	"strconv"
 	"strings"
 
@@ -33,6 +34,8 @@ func (s *service) Register(register_data user.Register) error {
 	helper.ConvertStruct(&register_data, &validate)
 	err := s.v.Struct(&validate)
 	if err != nil {
+		log.Println(err.Error())
+		log.Println(register_data)
 		return errors.New(helper.ErrorInvalidValidate)
 	}
 

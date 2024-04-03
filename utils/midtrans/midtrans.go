@@ -2,14 +2,13 @@ package midtrans
 
 import (
 	"BE-Inbuscap/config"
-	"fmt"
 
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/coreapi"
 	"github.com/midtrans/midtrans-go/snap"
 )
 
-func MidtransCreateToken(orderID string, amount float64, namaCustomer string, email string, noHp string) *snap.Response {
+func MidtransCreateToken(orderID string, amount int, namaCustomer string, email string, noHp string) *snap.Response {
 	var s = snap.Client{}
 	s.New(config.InitConfig().MIDTRANS_SERVER_KEY, midtrans.Sandbox)
 
@@ -36,7 +35,7 @@ func MidtransCreateToken(orderID string, amount float64, namaCustomer string, em
 	}
 
 	snapResp, _ := s.CreateTransaction(req)
-	fmt.Println("snapresponse = ", snapResp)
+
 	return snapResp
 }
 
