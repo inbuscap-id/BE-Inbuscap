@@ -125,6 +125,16 @@ func (cb *TransactionQuery) Update(item transaction.Transaction) (*transaction.T
 	}
 
 	data.ID = item.ID
+
+	var user = new(User)
+	if err := cb.db.Where(" id = ?", data.UserID).First(&data).Error; err != nil {
+		return nil, err
+	}
+	user.Saldo += data.Amount
+	if err := cb.db.Save(&user).Error; err != nil {
+		return nil, err
+	}
+
 	if err := cb.db.Save(&data).Error; err != nil {
 		return nil, err
 	}
