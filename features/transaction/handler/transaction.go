@@ -5,6 +5,7 @@ import (
 	"BE-Inbuscap/helper"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	gojwt "github.com/golang-jwt/jwt/v5"
@@ -58,38 +59,36 @@ func (at *TransactionHandler) AddTransaction() echo.HandlerFunc {
 	}
 }
 
-// func (ct *TransactionHandler) CheckTransaction() echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		transactionID, err := strconv.ParseUint(c.Param("id"), 10, 64)
-// 		if err != nil {
-// 			return responses.PrintResponse(
-// 				c, http.StatusBadRequest,
-// 				"id tidak valid",
-// 				nil)
-// 		}
-// 		result, err := ct.s.CheckTransaction(uint(transactionID))
+func (ct *TransactionHandler) CheckTransaction() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		transactionID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			log.Println(err.Error())
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
 
-// 		if err != nil {
-// 			c.Logger().Error("Error fetching : ", err.Error())
-// 			return responses.PrintResponse(
-// 				c, http.StatusInternalServerError,
-// 				"failed to retrieve data",
-// 				nil)
-// 		}
+		}
+		result, err := ct.s.CheckTransaction(uint(transactionID))
 
-// 		var response = new(TransactionRes)
-// 		response.ID = result.ID
-// 		response.NoInvoice = result.NoInvoice
-// 		response.JobID = result.JobID
-// 		response.JobPrice = result.TotalPrice
-// 		response.Status = result.Status
+		if err != nil {
+			c.Logger().Error("Error fetching : ", err.Error())
+			log.Println(err.Error())
+			return c.JSON(helper.ResponseFormat(http.StatusInternalServerError, helper.ErrorGeneralDatabase))
 
-// 		return responses.PrintResponse(
-// 			c, http.StatusOK,
-// 			"transaction detail",
-// 			response)
-// 	}
-// }
+		}
+
+		var response = new(TransactionRes)
+		response.ID = result.ID
+		response.OrderID = result.OrderID
+		response.UserId = result.UserId
+		response.Amount = result.Amount
+		response.Status = result.Status
+		response.Url = result.Url
+		response.Token = result.Token
+		response.CreatedAt = result.CreatedAt
+
+		return c.JSON(helper.ResponseFormat(http.StatusCreated, "transaction is retireved", response))
+	}
+}
 
 func (cb *TransactionHandler) CallBack() echo.HandlerFunc {
 	return func(c echo.Context) error {

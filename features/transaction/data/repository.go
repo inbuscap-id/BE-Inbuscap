@@ -88,6 +88,32 @@ func (ct *TransactionQuery) CheckTransaction(orderID string) (*transaction.Trans
 
 }
 
+func (ct *TransactionQuery) CheckTransactionById(id uint) (*transaction.Transaction, error) {
+	var data Transaction
+	if err := ct.db.Table("transactions").Where(" id = ?", id).Find(&data).Error; err != nil {
+		fmt.Println("transactions = ", data)
+		return &transaction.Transaction{}, err
+	}
+
+	if data.ID == 0 {
+		err := errors.New("transaction doesnt exist")
+		return nil, err
+	}
+
+	result := &transaction.Transaction{
+		ID:        data.ID,
+		UserId:    data.UserID,
+		Amount:    data.Amount,
+		Status:    data.Status,
+		Url:       data.Url,
+		Token:     data.Token,
+		OrderID:   data.OrderID,
+		CreatedAt: data.CreatedAt,
+	}
+
+	return result, nil
+}
+
 func (cb *TransactionQuery) Update(item transaction.Transaction) (*transaction.Transaction, error) {
 	var data = Transaction{
 		OrderID: item.OrderID,
@@ -99,6 +125,19 @@ func (cb *TransactionQuery) Update(item transaction.Transaction) (*transaction.T
 	}
 
 	data.ID = item.ID
+
+	var user = new(User)
+	if err := cb.db.Where(" id = ?", data.UserID).First(&data).Error; err != nil {
+		return nil, err
+	}
+	if data.Status == "Success" {
+		user.Saldo += data.Amount
+	}
+
+	if err := cb.db.Save(&user).Error; err != nil {
+		return nil, err
+	}
+
 	if err := cb.db.Save(&data).Error; err != nil {
 		return nil, err
 	}

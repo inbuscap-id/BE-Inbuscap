@@ -35,13 +35,13 @@ func (at *TransactionService) AddTransaction(token *golangjwt.Token, amount int)
 	return result, err
 }
 
-// func (ct *TransactionService) CheckTransaction(transactionID uint) (transaction.Transaction, error) {
-// 	result, err := ct.repo.CheckTransaction(transactionID)
-// 	if err != nil {
-// 		return transaction.Transaction{}, err
-// 	}
-// 	return *result, err
-// }
+func (ct *TransactionService) CheckTransaction(transactionID uint) (transaction.Transaction, error) {
+	result, err := ct.repo.CheckTransactionById(transactionID)
+	if err != nil {
+		return transaction.Transaction{}, err
+	}
+	return *result, err
+}
 
 func (cb *TransactionService) CallBack(orderID string) (transaction.Transaction, error) {
 	data, err := cb.repo.CheckTransaction(orderID)
