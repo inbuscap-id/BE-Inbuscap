@@ -126,7 +126,7 @@ func (cb *TransactionQuery) Update(item transaction.Transaction) (*transaction.T
 	data.ID = item.ID
 
 	var user = new(User)
-	if err := cb.db.Where(" id = ?", data.UserID).First(&data).Error; err != nil {
+	if err := cb.db.Where(" id = ?", data.UserID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	if data.Status == "Success" {
