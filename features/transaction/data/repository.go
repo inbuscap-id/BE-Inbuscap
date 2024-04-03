@@ -130,7 +130,10 @@ func (cb *TransactionQuery) Update(item transaction.Transaction) (*transaction.T
 	if err := cb.db.Where(" id = ?", data.UserID).First(&data).Error; err != nil {
 		return nil, err
 	}
-	user.Saldo += data.Amount
+	if data.Status == "Success" {
+		user.Saldo += data.Amount
+	}
+
 	if err := cb.db.Save(&user).Error; err != nil {
 		return nil, err
 	}
