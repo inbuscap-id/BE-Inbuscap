@@ -3,6 +3,7 @@ package handler
 import (
 	"BE-Inbuscap/features/transaction"
 	"BE-Inbuscap/helper"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -92,13 +93,23 @@ func (ct *TransactionHandler) CheckTransaction() echo.HandlerFunc {
 
 func (cb *TransactionHandler) CallBack() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var input = new(CallBack)
-		if err := c.Bind(input); err != nil {
+		// 1. Initialize empty map
+		var notificationPayload map[string]interface{}
 
+		// 2. Parse JSON request body and use it to set json to payload
+		err := json.NewDecoder(c.Request().Body).Decode(&notificationPayload)
+		if err != nil {
+			// do something on error when decode
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
-
 		}
-		result, err := cb.s.CallBack(input.OrderID)
+		// 3. Get order-id from payload
+		orderId, exists := notificationPayload["order_id"].(string)
+		if !exists {
+			// do something when key `order_id` not found
+			log.Println("order id not found")
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+		}
+		result, err := cb.s.CallBack(orderId)
 		if err != nil {
 			c.Logger().Error("something wrong: ", err.Error())
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorGeneralServer))
