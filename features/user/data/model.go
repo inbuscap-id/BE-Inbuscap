@@ -53,7 +53,7 @@ type Report struct {
 
 type Transaction struct {
 	gorm.Model
-	OrderID string `gorm:"primarykey"`
+	OrderID string `gorm:"unique"`
 	UserID  uint
 
 	Amount int

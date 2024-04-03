@@ -2,7 +2,6 @@ package data
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/google/uuid"
 
@@ -64,7 +63,7 @@ func (at *TransactionQuery) AddTransaction(userID uint, amount int) (transaction
 func (ct *TransactionQuery) CheckTransaction(orderID string) (*transaction.Transaction, error) {
 	var data Transaction
 	if err := ct.db.Table("transactions").Where("order_id = ?", orderID).Find(&data).Error; err != nil {
-		fmt.Println("transactions = ", data)
+
 		return &transaction.Transaction{}, err
 	}
 
@@ -91,7 +90,7 @@ func (ct *TransactionQuery) CheckTransaction(orderID string) (*transaction.Trans
 func (ct *TransactionQuery) CheckTransactionById(id uint) (*transaction.Transaction, error) {
 	var data Transaction
 	if err := ct.db.Table("transactions").Where(" id = ?", id).Find(&data).Error; err != nil {
-		fmt.Println("transactions = ", data)
+
 		return &transaction.Transaction{}, err
 	}
 
