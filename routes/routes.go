@@ -44,4 +44,5 @@ func investRoute(c *echo.Echo, cc invest.Controller, config echo.MiddlewareFunc)
 func transactionRoute(c *echo.Echo, cc transaction.Controller, config echo.MiddlewareFunc) {
 	c.POST("/transactions/topup", cc.AddTransaction(), config)
 	c.POST("/transactions/callback", cc.CallBack())
+	c.GET("/transactions/topup/:id", cc.CheckTransaction())
 }

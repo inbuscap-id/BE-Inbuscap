@@ -31,18 +31,19 @@ type Transaction struct {
 
 type Controller interface {
 	AddTransaction() echo.HandlerFunc
-	// CheckTransaction() echo.HandlerFunc
+	CheckTransaction() echo.HandlerFunc
 	CallBack() echo.HandlerFunc
 }
 
 type Repository interface {
 	AddTransaction(userID uint, amount int) (Transaction, error)
 	CheckTransaction(orderID string) (*Transaction, error)
+	CheckTransactionById(id uint) (*Transaction, error)
 	Update(item Transaction) (*Transaction, error)
 }
 
 type Service interface {
 	AddTransaction(token *jwt.Token, amount int) (Transaction, error)
-	// CheckTransaction(transactionID uint) (Transaction, error)
+	CheckTransaction(transactionID uint) (Transaction, error)
 	CallBack(noInvoice string) (Transaction, error)
 }
