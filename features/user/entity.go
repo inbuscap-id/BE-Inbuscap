@@ -83,7 +83,7 @@ type Register struct {
 	Email     string `validate:"required,email"`
 	Handphone string `validate:"required,number,min=11,max=14"`
 	KTP       string `validate:"required,number,min=16,max=16"`
-	NPWP      string `validate:"required,number,min=15,max=15"`
+	NPWP      string `validate:"required,number,min=15,max=16"`
 	Password  string `validate:"required,min=8"`
 }
 
@@ -92,7 +92,7 @@ type Update struct {
 	Email     string `validate:"required,email"`
 	Handphone string `validate:"required,number,min=11,max=14"`
 	KTP       string `validate:"required,number,min=16,max=16"`
-	NPWP      string `validate:"required,number,min=15,max=15"`
+	NPWP      string `validate:"required,number,min=15,max=16"`
 	Password  string `validate:"required,min=8"`
 }
 

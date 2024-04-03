@@ -21,7 +21,7 @@ func New(r transaction.Repository) transaction.Service {
 	}
 }
 
-func (at *TransactionService) AddTransaction(token *golangjwt.Token, amount float64) (transaction.Transaction, error) {
+func (at *TransactionService) AddTransaction(token *golangjwt.Token, amount int) (transaction.Transaction, error) {
 	userID := jwt.DecodeToken(token)
 	id, err := strconv.Atoi(userID)
 	if err != nil {

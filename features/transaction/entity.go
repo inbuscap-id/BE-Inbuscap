@@ -11,7 +11,7 @@ type Transaction struct {
 	ID        uint
 	OrderID   string
 	UserId    uint
-	Amount    float64
+	Amount    int
 	Status    string
 	Token     string
 	Url       string
@@ -36,13 +36,13 @@ type Controller interface {
 }
 
 type Repository interface {
-	AddTransaction(userID uint, amount float64) (Transaction, error)
+	AddTransaction(userID uint, amount int) (Transaction, error)
 	CheckTransaction(orderID string) (*Transaction, error)
 	Update(item Transaction) (*Transaction, error)
 }
 
 type Service interface {
-	AddTransaction(token *jwt.Token, amount float64) (Transaction, error)
+	AddTransaction(token *jwt.Token, amount int) (Transaction, error)
 	// CheckTransaction(transactionID uint) (Transaction, error)
 	CallBack(noInvoice string) (Transaction, error)
 }

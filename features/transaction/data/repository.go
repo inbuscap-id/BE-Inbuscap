@@ -3,7 +3,8 @@ package data
 import (
 	"errors"
 	"fmt"
-	"os/exec"
+
+	"github.com/google/uuid"
 
 	"BE-Inbuscap/features/transaction"
 
@@ -22,7 +23,7 @@ func New(db *gorm.DB) transaction.Repository {
 	}
 }
 
-func (at *TransactionQuery) AddTransaction(userID uint, amount float64) (transaction.Transaction, error) {
+func (at *TransactionQuery) AddTransaction(userID uint, amount int) (transaction.Transaction, error) {
 	var input Transaction
 	input.UserID = userID
 	input.Amount = amount
@@ -31,21 +32,14 @@ func (at *TransactionQuery) AddTransaction(userID uint, amount float64) (transac
 		return transaction.Transaction{}, err
 	}
 
-	newUUID, err := exec.Command("uuidgen").Output()
-	if err != nil {
-		return transaction.Transaction{}, err
-
-	}
-	input.OrderID = string(newUUID)
+	newUUID := uuid.New()
+	input.OrderID = string(newUUID.String())
 	var usr = new(User)
 	if err := at.db.First(usr, input.UserID).Error; err != nil {
 		return transaction.Transaction{}, err
 	}
 
 	snap := midtrans.MidtransCreateToken(input.OrderID, amount, usr.Fullname, usr.Email, usr.Handphone)
-
-	fmt.Println("Redirect URL:", snap.RedirectURL)
-	fmt.Println("Token:", snap.Token)
 
 	input.Url = snap.RedirectURL
 	input.Token = snap.Token
