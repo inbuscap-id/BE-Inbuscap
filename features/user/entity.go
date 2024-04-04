@@ -33,16 +33,18 @@ type Model interface {
 // Structur Data
 type User struct {
 	gorm.Model
-	Fullname    string
-	Email       string `gorm:"unique"`
-	Handphone   string `gorm:"unique"`
-	KTP         string `gorm:"unique"`
-	NPWP        string
-	Password    string
-	PhotoKTP    string
-	PhotoNPWP   string
-	PhotoSelf   string
-	IsVerified  bool
+	Fullname   string
+	Email      string `gorm:"unique"`
+	Handphone  string `gorm:"unique"`
+	KTP        string `gorm:"unique"`
+	NPWP       string
+	Password   string
+	PhotoKTP   string
+	PhotoNPWP  string
+	PhotoSelf  string
+	IsVerified bool
+	IsAdmin    bool
+
 	Saldo       int
 	Proposals   []Proposal
 	Investments []Investment

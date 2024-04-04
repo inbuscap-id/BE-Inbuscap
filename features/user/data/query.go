@@ -23,6 +23,8 @@ func New(db *gorm.DB) user.Model {
 func (m *model) Register(newData user.User) error {
 	newData.CreatedAt = time.Now().UTC()
 	newData.UpdatedAt = time.Now().UTC()
+	newData.IsVerified = false
+	newData.IsAdmin = false
 	return m.connection.Create(&newData).Error
 }
 

@@ -16,6 +16,7 @@ type User struct {
 	PhotoNPWP    string
 	PhotoSelf    string
 	IsVerified   bool
+	IsAdmin      bool
 	Saldo        int
 	Proposals    []Proposal
 	Investments  []Investment

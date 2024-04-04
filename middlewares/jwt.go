@@ -7,9 +7,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateJWT(id string) (string, error) {
+func GenerateJWT(id string, status bool, role bool) (string, error) {
 	var data = jwt.MapClaims{}
 	data["id"] = id
+	data["is_active"] = status
+	data["is_admin"] = role
 	data["iat"] = time.Now().Unix()
 	data["exp"] = time.Now().Add(time.Hour * 3).Unix()
 
@@ -32,4 +34,31 @@ func DecodeToken(i interface{}) string {
 	}
 
 	return result
+}
+
+func DecodeRole(i interface{}) (bool, error) {
+	var claim = i.(*jwt.Token).Claims.(jwt.MapClaims)
+	var result string
+
+	if val, found := claim["is_admin"]; found {
+		result = val.(string)
+	}
+	if result == "true" {
+		return true, nil
+	}
+
+	return false, nil
+}
+func DecodeStatus(i interface{}) (bool, error) {
+	var claim = i.(*jwt.Token).Claims.(jwt.MapClaims)
+	var result string
+
+	if val, found := claim["is_active"]; found {
+		result = val.(string)
+	}
+	if result == "true" {
+		return true, nil
+	}
+
+	return false, nil
 }
