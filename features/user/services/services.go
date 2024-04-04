@@ -74,7 +74,7 @@ func (s *service) Login(login_data user.User) (string, error) {
 	}
 
 	// Create Token
-	token, err := middlewares.GenerateJWT(strconv.Itoa(int(dbData.ID)))
+	token, err := middlewares.GenerateJWT(strconv.Itoa(int(dbData.ID)), dbData.IsVerified, dbData.IsAdmin)
 	if err != nil {
 		return "", errors.New(helper.ErrorGeneralServer)
 	}
