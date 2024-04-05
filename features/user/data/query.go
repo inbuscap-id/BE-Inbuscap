@@ -36,7 +36,8 @@ func (m *model) Login(input string) (user.User, error) {
 
 func (m *model) Profile(id string) (user.User, error) {
 	var result user.User
-	err := m.connection.Where("id = ?", id).Find(&result).Error
+	err := m.connection.Where("id = ?", id).First(&result).Error
+
 	return result, err
 }
 

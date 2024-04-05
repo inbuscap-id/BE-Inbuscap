@@ -14,6 +14,7 @@ type AppConfig struct {
 	DBName                string
 	Cloudinary_API_Key    string
 	Cloudinary_API_Secret string
+	Cloudinary_API_CLD    string
 	MIDTRANS_SERVER_KEY   string
 }
 
@@ -64,6 +65,16 @@ func AssignEnv(c AppConfig) (AppConfig, bool) {
 	} else {
 		missing = true
 	}
+	if val, found := os.LookupEnv("Cloudinary_API_CLD"); found {
+		c.Cloudinary_API_CLD = val
+	} else {
+		missing = true
+	}
+	// if val, found := os.LookupEnv("Folder"); found {
+	// 	c.Folder = val
+	// } else {
+	// 	missing = true
+	// }
 	if val, found := os.LookupEnv("JWT_SECRET"); found {
 		JWTSECRET = val
 	} else {

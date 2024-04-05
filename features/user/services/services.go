@@ -4,8 +4,10 @@ import (
 	"BE-Inbuscap/features/user"
 	"BE-Inbuscap/helper"
 	"BE-Inbuscap/middlewares"
+	utils "BE-Inbuscap/utils/cloudinary"
 	"errors"
 	"log"
+	"mime/multipart"
 	"strconv"
 	"strings"
 
@@ -94,8 +96,8 @@ func (s *service) Profile(token *jwt.Token) (user.User, error) {
 	}
 
 	// Finished
-	result.CreatedAt = result.CreatedAt.UTC()
-	result.UpdatedAt = result.UpdatedAt.UTC()
+	// result.CreatedAt = result.CreatedAt.UTC()
+	// result.UpdatedAt = result.UpdatedAt.UTC()
 	return result, nil
 }
 
@@ -163,5 +165,37 @@ func (s *service) Delete(token *jwt.Token) error {
 	}
 
 	// Finished
+	return nil
+}
+
+func (s *service) AddVerification(token *jwt.Token, uploads []*multipart.FileHeader) error {
+	var links []string
+	for _, val := range uploads {
+		link, err := utils.UploadImage(val)
+		if err != nil {
+			log.Println("error di service:", err.Error())
+			return err
+		}
+		links = append(links, link)
+	}
+	// Get ID From Token
+	decodeID := middlewares.DecodeToken(token)
+
+	// Get Profile
+	result, err := s.model.Profile(decodeID)
+	if err != nil {
+		log.Println("error di service:", err.Error())
+
+		return err
+	}
+	result.PhotoKTP = links[0]
+	result.PhotoNPWP = links[1]
+	result.PhotoSelf = links[2]
+
+	if err := s.model.Update(result); err != nil {
+		log.Println("error di service:", err.Error())
+
+		return err
+	}
 	return nil
 }

@@ -38,26 +38,22 @@ func DecodeToken(i interface{}) string {
 
 func DecodeRole(i interface{}) (bool, error) {
 	var claim = i.(*jwt.Token).Claims.(jwt.MapClaims)
-	var result string
+	var result bool
 
 	if val, found := claim["is_admin"]; found {
-		result = val.(string)
-	}
-	if result == "true" {
-		return true, nil
+		result = val.(bool)
+		return result, nil
 	}
 
 	return false, nil
 }
 func DecodeStatus(i interface{}) (bool, error) {
 	var claim = i.(*jwt.Token).Claims.(jwt.MapClaims)
-	var result string
+	var result bool
 
 	if val, found := claim["is_active"]; found {
-		result = val.(string)
-	}
-	if result == "true" {
-		return true, nil
+		result = val.(bool)
+		return result, nil
 	}
 
 	return false, nil
