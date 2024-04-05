@@ -49,12 +49,12 @@ func (m *model) GetAll(page int) ([]proposal.Proposal, int, error) {
 
 func (m *model) GetDetail(id_proposal string) (proposal.Proposal, error) {
 	var result proposal.Proposal
-	err := m.connection.Joins("User").Where("ID = ?", id_proposal).Find(&result).Error
+	err := m.connection.Joins("User").Where("proposals.id = ?", id_proposal).Find(&result).Error
 	return result, err
 }
 
 func (m *model) Delete(id string, prososal_id string) error {
-	if query := m.connection.Where("user_id AND id = ?", id, prososal_id).Delete(&proposal.Proposal{}); query.Error != nil {
+	if query := m.connection.Where("user_id = ? AND id = ?", id, prososal_id).Delete(&proposal.Proposal{}); query.Error != nil {
 		return errors.New(helper.ErrorGeneralDatabase)
 	} else if query.RowsAffected == 0 {
 		return errors.New(helper.ErrorDatabaseNotFound)

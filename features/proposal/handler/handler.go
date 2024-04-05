@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -142,6 +142,7 @@ func (ct *controller) Delete() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
+
 		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success delete post", nil))
 	}
 }

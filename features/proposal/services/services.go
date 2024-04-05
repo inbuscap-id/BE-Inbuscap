@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type services struct {
@@ -72,8 +72,9 @@ func (s *services) Update(token *jwt.Token, proposal_id string, image *multipart
 }
 
 func (s *services) GetAll(page string) ([]proposal.Proposal, int, error) {
+	var page_int = 0
 	page_int, err := strconv.Atoi(page)
-	if err != nil {
+	if page != "" && err != nil {
 		return []proposal.Proposal{}, 0, errors.New(helper.ErrorUserInput)
 	}
 

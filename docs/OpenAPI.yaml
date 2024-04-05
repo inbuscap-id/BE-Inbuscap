@@ -55,7 +55,7 @@ paths:
               fullname: "Muhammad Bagir"
               email: "bagir3008@gmail.com"
               handphone: "085912345678"
-              password: "4545"
+              password: "pass12345"
               ktp: "3573052004030001"
               npwp: "123456789003000"
       responses:
@@ -67,7 +67,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
               example:
                 code: 201
-                message: "Successful user registration"
+                message: "Registered Successfully"
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -89,12 +89,14 @@ paths:
               example: 
                 code: 200
                 data:
+                  created_at: "0001-01-01T00:00:00Z"
+                  updated_at: "0001-01-01T00:00:00Z"
                   fullname: "Muhammad Bagir"
                   email: "bagir3008@gmail.com"
                   handphone: "085912345678"
-                  password: "4545"
                   ktp: "3573052004030001"
                   npwp: "123456789003000"
+                  isverified: false
                 message: "Successfully Get MyProfile"
         '400':
           $ref: '#/components/responses/400'
@@ -148,7 +150,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
               example: 
                 code : 200
-                message: "successfully updated user"
+                message: "Successfully Updated"
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -168,7 +170,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
               example:
                 code: 200
-                message: "Successfully Delete User"
+                message: "Successfully Deleted User"
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -203,8 +205,7 @@ paths:
               example: 
                 code: 200
                 data:
-                  fullname: "Muhamad Khomsin Ariseno"
-                  token: "abogoboga_12sfqQSF008@yuhuu"
+                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTE4MTIxNDAsImlhdCI6MTcxMTgwMTM0MCwiaWQiOiI5In0.EgdThcueBhrcnJHcxtvw1jbpQQudQT8uExutev2dm9c"
                 message: "Login Successfully"
         '400':
           $ref: '#/components/responses/400'
@@ -216,8 +217,8 @@ paths:
         - proposal
       security:
         - bearerAuth: []
-      summary: Add New Post
-      description: Add New Post Using Token
+      summary: Add New Proposal
+      description: Add New Proposal Using Token
       requestBody:
         required: true
         content:
@@ -242,35 +243,17 @@ paths:
                   type: integer
                 proposal:
                   type: string
-                  format: binary    
-          application/json:
-            schema:
-              type: object
-              required:
-                - title
-                - description
-                - capital
-              properties:
-                title:
-                  type: string
-                description:
-                  type: string
-                capital:
-                  type: integer
-            example:
-              title: "Inbuscap.id"
-              description: "saya akan menciptakan lapangan bisnis yang meliputi sekrot ..."
-              capital: 15000000
+                  format: binary
       responses:
         '201':
-          description: "New Post Added Successfully"
+          description: "New Proposal Added Successfully"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
               example:
                 code: 201
-                message: "New Post Added Successfully"
+                message: "New Proposal Added Successfully"
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -279,11 +262,6 @@ paths:
       tags:
         - proposal
       parameters:
-        - in: query
-          name: username
-          schema:
-            type: integer
-          description: username yang ingin ditampilkan postnya
         - in: query
           name: page
           schema:
@@ -323,30 +301,27 @@ paths:
                     capital: 15000000
                     collected: 0
                 message: "Successfully See Proposals"
-                pagination:
-                  page: 1
-                  pagesize: 10
-                  total_pages: 1
+                total_page: 10
         '400':
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
-  /proposals/{postID}:
+  /proposals/{proposal_id}:
     get:
       tags:
         - proposal
       parameters:
-        - name: proposals_id
+        - name: proposal_id
           in: path
-          description: ID post yang ingin di ubah
+          description: ID Proposal yang ingin di ubah
           required: true
           schema:
             type: string
           example: 1
-      summary: See Detail Post
+      summary: See Detail Proposal
       responses:
         '200':
-          description: "Successfully See Post With Comments"
+          description: "Successfully See Proposal With Comments"
           content:
             application/json:
               schema:
@@ -363,7 +338,7 @@ paths:
                   collected: 5000000
                   profit: 10
                   proposal: "http://... .com"
-                message: "Successfully Get Post With Comment"
+                message: "Successfully Get Detail Proposal"
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -374,25 +349,25 @@ paths:
       security:
         - bearerAuth: []
       parameters: 
-        - name: postID
+        - name: proposal_id
           in: path
-          description: ID post yang ingin di hapus
+          description: ID Proposal yang ingin di hapus
           required: true
           schema:
             type: string
           example: 1
-      summary: Delete Post
-      description: Delete Post Using Token
+      summary: Delete Proposal
+      description: Delete Proposal Using Token
       responses:
         '200':
-          description: "Successfully Delete Post"
+          description: "Successfully Delete Proposal"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
               example: 
                 code : 200
-                message: "Successfully Delete Post"
+                message: "Successfully Delete Proposal"
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -403,15 +378,15 @@ paths:
       security:
         - bearerAuth: []
       parameters: 
-        - name: postID
+        - name: proposal_id
           in: path
-          description: ID post yang ingin di edit
+          description: ID Proposal yang ingin di edit
           required: true
           schema:
             type: string
           example: 1
-      summary: Edit Post
-      description: Edit Post Using Token
+      summary: Edit Proposal
+      description: Edit Proposal Using Token
       requestBody:
         required: true
         content:
@@ -457,19 +432,19 @@ paths:
               capital: 15000000
       responses:
         '200':
-          description: "Successfully Edit Post"
+          description: "Successfully Edit Proposal"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
               example:
                 code: 200
-                message: "Successfully Edit Post"
+                message: "Successfully Edit Proposal"
         '400':
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
-    
+  /report:
     post:
       tags:
         - proposal
@@ -484,10 +459,13 @@ paths:
               type: object
               required:
                 # - image
+                - proposal_id
                 - date
                 - document
                 - amount
               properties:
+                proposal_id:
+                  type: integer
                 date:
                   type: string
                 document:
@@ -561,10 +539,7 @@ paths:
                     capital: 15000000
                     collected: 0
                 message: "Successfully See Proposals"
-                pagination:
-                  page: 1
-                  pagesize: 10
-                  total_pages: 1
+                total_pages: 1
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -582,15 +557,15 @@ paths:
             schema:
               type: object
               required:
-                - post_id
+                - proposal_id
                 - nominal
               properties:
-                post_id:
+                proposal_id:
                   type: integer
                 nominal:
                   type: integer
             example:
-              post_id: 1
+              proposal_id: 1
               nominal: 5000000
       responses:
         '201':
@@ -610,9 +585,9 @@ paths:
       tags:
         - investment
       parameters: 
-        - name: postid
+        - name: proposal_id
           in: query
-          description: ID post yang mau di tarik
+          description: ID Proposal yang mau di tarik
           required: true
           schema:
             type: string
@@ -684,13 +659,10 @@ paths:
             schema:
               type: object
               required:
-              - user_id
               - photo_ktp
               - photo_npwp
               - photo_selfie
               properties:
-                user_id:
-                  type: integer
                 photo_ktp:
                  type: string
                  format: binary
@@ -721,7 +693,6 @@ paths:
       security:
         - bearerAuth: []
       summary: Get pending verifications
-          
       responses:
         '200':
           description: "verification requests retrieved"
@@ -739,10 +710,7 @@ paths:
                     fullname: "Saitama"
                   - id: 3
                     fullname: "Samuel Alexander Pieter"
-                pagination:
-                  page: 1
-                  pagesize: 10
-                  total_pages: 1
+                total_pages: 1
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -781,11 +749,7 @@ paths:
                     ktp: "3623074107640027"
                     npwp: "3623074107640027"
                     phone: "085912345678" #ditanyakan nanti, butuh ini nggak kalo kalo user bad upload
-
                     is_active: false
-
-
-
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -850,7 +814,6 @@ paths:
       security:
         - bearerAuth: []
       summary: Get available returns from investment
-
       responses:
         '200':
           description: "Returns retrieved successfully"
@@ -877,13 +840,7 @@ paths:
                     date: "02/08/2024"
                     document: "http://... report.pdf"
                     amount: 300000
-
-
-                pagination:
-                  page: 1
-                  pagesize: 10
-                  total_pages: 1
-
+                total_pages: 1
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -1010,22 +967,16 @@ components:
       properties:
         code:
           type: integer
-          format: int8
+          format: int
         message:
           type: string
         data:
           type: array
           items:
             type: object
-        pagination:
-         type: object
-         properties:
-          page:
-            type: integer
-          pagesize:
-            type: integer
-          total_pages:
-            type: integer
+        total_pages:
+         type: integer
+         format: int
 
   responses:
     '201':
