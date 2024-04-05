@@ -61,6 +61,15 @@ func (m *model) Update(data user.User) error {
 	if data.Password != "" {
 		selectUpdate = append(selectUpdate, "password")
 	}
+	if data.PhotoKTP != "" {
+		selectUpdate = append(selectUpdate, "photo_ktp")
+	}
+	if data.PhotoNPWP != "" {
+		selectUpdate = append(selectUpdate, "photo_npwp")
+	}
+	if data.PhotoSelf != "" {
+		selectUpdate = append(selectUpdate, "photo_self")
+	}
 	if len(selectUpdate) == 0 {
 		return errors.New(helper.ErrorNoRowsAffected)
 	}
