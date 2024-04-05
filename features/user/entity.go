@@ -1,6 +1,8 @@
 package user
 
 import (
+	"mime/multipart"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -12,6 +14,9 @@ type Controller interface {
 	Profile() echo.HandlerFunc
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
+	AddVerification() echo.HandlerFunc
+	// GetVerifications() echo.HandlerFunc
+	// Verify() echo.HandlerFunc
 }
 
 type Service interface {
@@ -20,6 +25,7 @@ type Service interface {
 	Profile(token *jwt.Token) (User, error)
 	Update(token *jwt.Token, update_data User) error
 	Delete(token *jwt.Token) error
+	AddVerification(token *jwt.Token, uploads []*multipart.FileHeader) error
 }
 
 type Model interface {

@@ -3,6 +3,8 @@ package handler
 import (
 	"BE-Inbuscap/features/user"
 	"BE-Inbuscap/helper"
+	"log"
+	"mime/multipart"
 	"net/http"
 	"strings"
 
@@ -84,8 +86,16 @@ func (ct *controller) Profile() echo.HandlerFunc {
 			return c.JSON(helper.ResponseFormat(http.StatusInternalServerError, helper.ErrorGeneralServer))
 		}
 
-		var profileResponse ProfileResponse
-		helper.ConvertStruct(&profile, &profileResponse)
+		var profileResponse = ProfileResponse{
+			CreatedAt:  profile.CreatedAt,
+			UpdatedAt:  profile.UpdatedAt,
+			Fullname:   profile.Fullname,
+			Email:      profile.Email,
+			Handphone:  profile.Handphone,
+			KTP:        profile.KTP,
+			NPWP:       profile.NPWP,
+			IsVerified: profile.IsVerified,
+		}
 
 		return c.JSON(helper.ResponseFormat(http.StatusOK, "Successfully Get MyProfile", profileResponse))
 	}
@@ -128,5 +138,46 @@ func (ct *controller) Delete() echo.HandlerFunc {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
 		return c.JSON(helper.ResponseFormat(http.StatusOK, "Successfully Deleted User"))
+	}
+}
+
+func (ct *controller) AddVerification() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ktp, err := helper.SelectFile(c, "photo_ktp")
+		if err != nil {
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInputFormat))
+		}
+		npwp, err := helper.SelectFile(c, "photo_npwp")
+		if err != nil {
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInputFormat))
+		}
+		selfie, err := helper.SelectFile(c, "photo_selfie")
+		if err != nil {
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInputFormat))
+		}
+		var input = []*multipart.FileHeader{}
+		input = append(input, ktp, npwp, selfie)
+
+		// err := c.Bind(&input)
+		// if err != nil {
+		// 	if strings.Contains(err.Error(), "unsupport") {
+		// 		return c.JSON(helper.ResponseFormat(http.StatusUnsupportedMediaType, helper.ErrorUserInputFormat))
+		// 	}
+		// 	return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+		// }
+
+		token, ok := c.Get("user").(*jwt.Token)
+		if !ok {
+			log.Println("error saat mengambil token")
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+		}
+		// log.Println("")
+
+		err = ct.service.AddVerification(token, input)
+		if err != nil {
+			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
+		}
+
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "Successfully Updated"))
 	}
 }

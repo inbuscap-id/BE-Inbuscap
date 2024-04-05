@@ -26,6 +26,7 @@ func userRoute(c *echo.Echo, uc user.Controller, config echo.MiddlewareFunc) {
 	c.GET("/users", uc.Profile(), config)
 	c.PUT("/users", uc.Update(), config)
 	c.DELETE("/users", uc.Delete(), config)
+	c.PUT("/verifications", uc.AddVerification(), config)
 }
 
 func proposalRoute(c *echo.Echo, pc proposal.Controller, config echo.MiddlewareFunc) {

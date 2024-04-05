@@ -11,6 +11,8 @@ type Controller interface {
 	GetDetail() echo.HandlerFunc
 	Delete() echo.HandlerFunc
 	Archive() echo.HandlerFunc
+	// GetVerifications() echo.HandlerFunc
+	// Verify() echo.HandlerFunc
 }
 
 type Model interface {

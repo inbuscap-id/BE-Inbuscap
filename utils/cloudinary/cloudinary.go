@@ -19,7 +19,7 @@ func UploadImage(image *multipart.FileHeader) (string, error) {
 	defer src.Close()
 
 	env := config.InitConfig()
-	cld, err := cloudinary.NewFromURL(fmt.Sprintf("cloudinary://%s:%s", env.Cloudinary_API_Key, env.Cloudinary_API_Secret))
+	cld, err := cloudinary.NewFromURL(fmt.Sprintf("cloudinary://%s:%s@%s", env.Cloudinary_API_Key, env.Cloudinary_API_Secret, env.Cloudinary_API_CLD))
 	if err != nil {
 		log.Println("error connecting to cloudinary:", err.Error())
 		return "", err
