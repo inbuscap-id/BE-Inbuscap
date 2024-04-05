@@ -79,7 +79,6 @@ func (m *model) Delete(id string) error {
 	} else {
 		fmt.Println(query.RowsAffected)
 	}
-	fmt.Println("23e2")
 	if query := m.connection.Where("id = ?", id).Delete(&user.User{}); query.Error != nil {
 		return errors.New(helper.ErrorGeneralDatabase)
 	} else if query.RowsAffected == 0 {

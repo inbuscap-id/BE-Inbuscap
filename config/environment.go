@@ -18,6 +18,8 @@ type AppConfig struct {
 }
 
 var JWTSECRET = ""
+var Cloudinary_API_Key = ""
+var Cloudinary_API_Secret = ""
 
 func AssignEnv(c AppConfig) (AppConfig, bool) {
 	var missing = false
@@ -67,7 +69,6 @@ func AssignEnv(c AppConfig) (AppConfig, bool) {
 	} else {
 		missing = true
 	}
-
 	return c, missing
 }
 
@@ -76,8 +77,12 @@ func InitConfig() AppConfig {
 	var missing = false
 	result, missing = AssignEnv(result)
 	if missing {
+		var missing_godotenv bool
 		godotenv.Load(".env")
-		result, _ = AssignEnv(result)
+		result, missing_godotenv = AssignEnv(result)
+		if missing_godotenv {
+			os.Exit(1)
+		}
 	}
 
 	return result
