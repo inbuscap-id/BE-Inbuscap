@@ -7,7 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateJWT(id string, status bool, role bool) (string, error) {
+func GenerateJWT(id string, status int, role bool) (string, error) {
 	var data = jwt.MapClaims{}
 	data["id"] = id
 	data["is_active"] = status
@@ -47,14 +47,14 @@ func DecodeRole(i interface{}) (bool, error) {
 
 	return false, nil
 }
-func DecodeStatus(i interface{}) (bool, error) {
+func DecodeStatus(i interface{}) (int, error) {
 	var claim = i.(*jwt.Token).Claims.(jwt.MapClaims)
-	var result bool
+	var result int
 
 	if val, found := claim["is_active"]; found {
-		result = val.(bool)
+		result = val.(int)
 		return result, nil
 	}
 
-	return false, nil
+	return 0, nil
 }

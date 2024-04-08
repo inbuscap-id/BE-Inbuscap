@@ -6,6 +6,7 @@ import (
 	proposal "BE-Inbuscap/features/proposal"
 	"BE-Inbuscap/features/transaction"
 	user "BE-Inbuscap/features/user"
+	"BE-Inbuscap/middlewares"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -26,7 +27,8 @@ func userRoute(c *echo.Echo, uc user.Controller, config echo.MiddlewareFunc) {
 	c.GET("/users", uc.Profile(), config)
 	c.PUT("/users", uc.Update(), config)
 	c.DELETE("/users", uc.Delete(), config)
-	c.PUT("/verifications", uc.AddVerification(), config)
+	c.PUT("/verifications/users", uc.AddVerification(), config)
+	c.GET("/verifications/users", uc.GetVerifications(), config, middlewares.CheckRole)
 }
 
 func proposalRoute(c *echo.Echo, pc proposal.Controller, config echo.MiddlewareFunc) {
