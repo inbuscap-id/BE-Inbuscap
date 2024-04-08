@@ -15,11 +15,13 @@ type User struct {
 	PhotoKTP     string
 	PhotoNPWP    string
 	PhotoSelf    string
-	IsVerified   bool
+	IsActive     int
+	IsAdmin      bool
 	Saldo        int
 	Proposals    []Proposal
 	Investments  []Investment
 	Transactions []Transaction
+	Avatar       string
 }
 
 type Proposal struct {

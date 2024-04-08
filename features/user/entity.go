@@ -1,6 +1,9 @@
 package user
 
 import (
+	"BE-Inbuscap/helper"
+	"mime/multipart"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -12,6 +15,9 @@ type Controller interface {
 	Profile() echo.HandlerFunc
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
+	AddVerification() echo.HandlerFunc
+	GetVerifications() echo.HandlerFunc
+	// Verify() echo.HandlerFunc
 }
 
 type Service interface {
@@ -20,6 +26,8 @@ type Service interface {
 	Profile(token *jwt.Token) (User, error)
 	Update(token *jwt.Token, update_data User) error
 	Delete(token *jwt.Token) error
+	AddVerification(token *jwt.Token, uploads []*multipart.FileHeader) error
+	GetVerifications(paginasi helper.Pagination, status int) ([]User, int, error)
 }
 
 type Model interface {
@@ -28,6 +36,7 @@ type Model interface {
 	Profile(id string) (User, error)
 	Update(data User) error
 	Delete(id string) error
+	GetVerifications(paginasi helper.Pagination, status int) ([]User, int, error)
 }
 
 // Structur Data
@@ -42,7 +51,9 @@ type User struct {
 	PhotoKTP    string
 	PhotoNPWP   string
 	PhotoSelf   string
-	IsVerified  bool
+	IsActive    int
+	IsAdmin     bool
+	Avatar      string
 	Saldo       int
 	Proposals   []Proposal
 	Investments []Investment

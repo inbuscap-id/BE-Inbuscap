@@ -4,11 +4,12 @@ import "net/http"
 
 const (
 	// User Input
-	ErrorUserInput       = "the data sent is incorrect"
-	ErrorUserInputFormat = "data format is not supported"
-	ErrorUserCredential  = "incorrect email or password"
-	ErrorInvalidValidate = "validation is invalid"
-
+	ErrorUserInput         = "the data sent is incorrect"
+	ErrorUserInputFormat   = "data format is not supported"
+	ErrorUserCredential    = "incorrect email or password"
+	ErrorInvalidValidate   = "validation is invalid"
+	ErrorAccountActivation = "you need to verify your account"
+	ErrorAuthorization     = "you do not have permission"
 	// Server
 	ErrorGeneralServer = "an error occurred in the server process"
 
