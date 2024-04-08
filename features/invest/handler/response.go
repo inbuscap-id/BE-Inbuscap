@@ -14,6 +14,7 @@ type InvestmentResponse struct {
 	Capital     int       `json:"capital"`
 	Share       int       `json:"share"`
 	Status      int       `json:"status"`
+	Collected   int       `json:"collected"`
 	Amount      int       `json:"amount"`
 }
 
