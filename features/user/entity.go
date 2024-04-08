@@ -70,6 +70,7 @@ type Proposal struct {
 	Capital     int
 	Share       int
 	Status      int
+	Collected   int
 	Investments []Investment
 	Reports     []Report
 }
@@ -77,6 +78,7 @@ type Proposal struct {
 type Investment struct {
 	gorm.Model
 	Proposal_id uint `gorm:"primarykey"`
+	Proposal    Proposal
 	User_id     uint `gorm:"primarykey"`
 	Amount      int
 	Status      int

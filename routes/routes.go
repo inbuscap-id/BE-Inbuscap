@@ -41,8 +41,10 @@ func proposalRoute(c *echo.Echo, pc proposal.Controller, config echo.MiddlewareF
 }
 
 func investRoute(c *echo.Echo, cc invest.Controller, config echo.MiddlewareFunc) {
-	// c.POST("/invests", cc.Create(), config)
-	// c.DELETE("/invests/:investID", cc.Delete(), config)
+	c.GET("/investments", cc.GetAll(), config)
+	c.POST("/investments", cc.SendCapital(), config)
+	c.DELETE("/investments", cc.CancelSendCapital(), config)
+	c.GET("/investments/:proposal_id", cc.GetDetail(), config)
 }
 
 func transactionRoute(c *echo.Echo, cc transaction.Controller, config echo.MiddlewareFunc) {

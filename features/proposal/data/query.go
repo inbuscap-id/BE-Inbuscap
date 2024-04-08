@@ -43,7 +43,7 @@ func (m *model) GetAll(page int) ([]proposal.Proposal, int, error) {
 	err := m.connection.Limit(10).Offset(page*10 - 10).Find(&result).Error
 
 	var numberOfProposals int
-	m.connection.Table("Proposals").Select("COUNT(ID)").Where("proposal_id = ?", 1).Scan(&numberOfProposals)
+	m.connection.Table("Proposals").Select("COUNT(ID)").Scan(&numberOfProposals)
 	return result, numberOfProposals % 10, err
 }
 

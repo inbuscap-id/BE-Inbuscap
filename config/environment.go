@@ -20,8 +20,6 @@ type AppConfig struct {
 }
 
 var JWTSECRET = ""
-var Cloudinary_API_Key = ""
-var Cloudinary_API_Secret = ""
 
 func AssignEnv(c AppConfig) (AppConfig, bool) {
 	var missing = false
