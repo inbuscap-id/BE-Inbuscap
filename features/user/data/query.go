@@ -71,6 +71,9 @@ func (m *model) Update(data user.User) error {
 	if data.PhotoSelf != "" {
 		selectUpdate = append(selectUpdate, "photo_self")
 	}
+	if data.Avatar != "" {
+		selectUpdate = append(selectUpdate, "avatar")
+	}
 	if len(selectUpdate) == 0 {
 		return errors.New(helper.ErrorNoRowsAffected)
 	}

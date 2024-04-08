@@ -101,7 +101,7 @@ func (s *service) Profile(token *jwt.Token) (user.User, error) {
 	return result, nil
 }
 
-func (s *service) Update(token *jwt.Token, update_data user.User) error {
+func (s *service) Update(token *jwt.Token, update_data user.User, avatar *multipart.FileHeader) error {
 	// Get ID From Token
 	decodeID := middlewares.DecodeToken(token)
 
@@ -144,6 +144,16 @@ func (s *service) Update(token *jwt.Token, update_data user.User) error {
 			return errors.New(helper.ErrorGeneralServer)
 		}
 		update_data.Password = newPassword
+	}
+	// update avatar bila ada
+	log.Println(avatar.Filename)
+	if avatar != nil {
+		link, err := utils.UploadImage(avatar)
+		if err != nil {
+			log.Println(err.Error())
+			return err
+		}
+		update_data.Avatar = link
 	}
 
 	// Update Data

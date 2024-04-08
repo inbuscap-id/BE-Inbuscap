@@ -24,7 +24,7 @@ type Service interface {
 	Register(register_data Register) error
 	Login(login_data User) (string, error)
 	Profile(token *jwt.Token) (User, error)
-	Update(token *jwt.Token, update_data User) error
+	Update(token *jwt.Token, update_data User, avatar *multipart.FileHeader) error
 	Delete(token *jwt.Token) error
 	AddVerification(token *jwt.Token, uploads []*multipart.FileHeader) error
 	GetVerifications(paginasi helper.Pagination, status int) ([]User, int, error)
