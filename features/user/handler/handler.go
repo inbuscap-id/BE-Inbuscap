@@ -99,6 +99,7 @@ func (ct *controller) Profile() echo.HandlerFunc {
 			PhotoNPWP: profile.PhotoNPWP,
 			PhotoSelf: profile.PhotoSelf,
 			Avatar:    profile.Avatar,
+			Saldo:     profile.Saldo,
 		}
 
 		return c.JSON(helper.ResponseFormat(http.StatusOK, "Successfully Get MyProfile", profileResponse))
@@ -107,7 +108,7 @@ func (ct *controller) Profile() echo.HandlerFunc {
 
 func (ct *controller) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var input user.User
+		var input UpdateRequest
 		err := c.Bind(&input)
 		if err != nil {
 			if strings.Contains(err.Error(), "unsupport") {
@@ -120,8 +121,20 @@ func (ct *controller) Update() echo.HandlerFunc {
 		if !ok {
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
 		}
+		avatar, err := helper.SelectFile(c, "avatar")
+		if err != nil && strings.Contains(err.Error(), "file") {
+			log.Println(err.Error())
+			avatar = nil
+		}
+		var processData = user.User{
+			Fullname:  input.Fullname,
+			Email:     input.Email,
+			Handphone: input.Handphone,
+			KTP:       input.KTP,
+			NPWP:      input.NPWP,
+			Password:  input.Password}
 
-		err = ct.service.Update(token, input)
+		err = ct.service.Update(token, processData, avatar)
 		if err != nil {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
@@ -213,7 +226,10 @@ func (ct *controller) GetVerifications() echo.HandlerFunc {
 			payload.ID = val.ID
 			payloads = append(payloads, payload)
 		}
+		if paginasi.Page > paginasi.TotalPages {
+			return c.JSON(helper.ResponseFormatArray(http.StatusNotFound, "index out of range", payloads, paginasi))
 
+		}
 		return c.JSON(helper.ResponseFormatArray(http.StatusOK, "User list sucessfully retrieved", payloads, paginasi))
 	}
 }
