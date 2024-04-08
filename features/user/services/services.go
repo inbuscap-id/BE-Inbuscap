@@ -76,7 +76,7 @@ func (s *service) Login(login_data user.User) (string, error) {
 	}
 
 	// Create Token
-	token, err := middlewares.GenerateJWT(strconv.Itoa(int(dbData.ID)), dbData.IsVerified, dbData.IsAdmin)
+	token, err := middlewares.GenerateJWT(strconv.Itoa(int(dbData.ID)), dbData.IsActive, dbData.IsAdmin)
 	if err != nil {
 		return "", errors.New(helper.ErrorGeneralServer)
 	}
@@ -198,4 +198,13 @@ func (s *service) AddVerification(token *jwt.Token, uploads []*multipart.FileHea
 		return err
 	}
 	return nil
+}
+
+func (s *service) GetVerifications(paginasi helper.Pagination, status int) ([]user.User, int, error) {
+	result, count, err := s.model.GetVerifications(paginasi, status)
+	if err != nil {
+		log.Println(err.Error(), "service")
+		return nil, 0, err
+	}
+	return result, count, nil
 }

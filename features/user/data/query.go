@@ -5,6 +5,7 @@ import (
 	"BE-Inbuscap/helper"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"gorm.io/gorm"
@@ -23,7 +24,7 @@ func New(db *gorm.DB) user.Model {
 func (m *model) Register(newData user.User) error {
 	newData.CreatedAt = time.Now().UTC()
 	newData.UpdatedAt = time.Now().UTC()
-	newData.IsVerified = false
+	newData.IsActive = 0
 	newData.IsAdmin = false
 	return m.connection.Create(&newData).Error
 }
@@ -97,4 +98,37 @@ func (m *model) Delete(id string) error {
 		return errors.New(helper.ErrorDatabaseNotFound)
 	}
 	return nil
+}
+func (m *model) GetVerifications(paginasi helper.Pagination, status int) ([]user.User, int, error) {
+	var proses = new([]User)
+	var count int64
+	offset := (paginasi.Page - 1) * paginasi.PageSize
+	if err := m.connection.Find(&proses).Where(" is_active = ? AND is_admin =? ", status, false).Count(&count).Error; err != nil {
+		log.Println("repo error: ", err.Error())
+		return nil, 0, err
+	}
+
+	var selected = new([]User)
+	if err := m.connection.Order("updated_at desc").Where(" is_active = ? AND is_admin =? ", status, false).Offset(offset).
+		Limit(paginasi.PageSize).Find(&selected).Error; err != nil {
+		log.Println("repo error: ", err.Error())
+		return nil, 0, err
+	}
+	var results []user.User
+	for _, val := range *selected {
+		var result = user.User{
+			Fullname:  val.Fullname,
+			Handphone: val.Handphone,
+			KTP:       val.KTP,
+			NPWP:      val.NPWP,
+			PhotoKTP:  val.PhotoKTP,
+			PhotoNPWP: val.PhotoNPWP,
+			PhotoSelf: val.PhotoSelf,
+			IsActive:  val.IsActive,
+		}
+		result.ID = val.ID
+		results = append(results, result)
+
+	}
+	return results, int(count), nil
 }

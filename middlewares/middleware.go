@@ -26,7 +26,7 @@ func CheckStatus(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		status, _ := DecodeStatus(c.Get("user").(*golangjwt.Token))
 
-		if !status {
+		if status != 1 {
 			return c.JSON(helper.ResponseFormat(http.StatusUnauthorized, helper.ErrorAccountActivation))
 		}
 

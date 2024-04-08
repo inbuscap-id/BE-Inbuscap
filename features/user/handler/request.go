@@ -12,7 +12,4 @@ type RegisterRequest struct {
 	KTP       string `json:"ktp" form:"ktp"`
 	NPWP      string `json:"npwp" form:"npwp"`
 	Password  string `json:"password" form:"password"`
-	PhotoKTP  string `json:"photo_ktp" form:"photo_ktp"`
-	PhotoNPWP string `json:"photo_npwp" form:"photo_npwp"`
-	PhotoSelf string `json:"photo_selfie" form:"photo_selfie"`
 }
