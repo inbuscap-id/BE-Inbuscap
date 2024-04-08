@@ -1,6 +1,8 @@
 package data
 
 import (
+	"BE-Inbuscap/features/proposal"
+
 	"gorm.io/gorm"
 )
 
@@ -22,20 +24,7 @@ type User struct {
 	Transactions []Transaction
 }
 
-type Proposal struct {
-	gorm.Model
-	User_id     uint
-	User        *User
-	Title       string
-	Image       string
-	Document    string
-	Description string
-	Capital     int
-	Share       int
-	Status      int
-	Investments []Investment
-	Reports     []Report
-}
+type Proposal proposal.Proposal
 
 type Investment struct {
 	gorm.Model

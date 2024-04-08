@@ -9,7 +9,9 @@ func ResponseFormat(status int, message any, data ...any) (int, map[string]any) 
 	}
 
 	if len(data) >= 1 {
-		result["data"] = data[0]
+		if data[0] != nil {
+			result["data"] = data[0]
+		}
 	}
 
 	if len(data) >= 2 {
