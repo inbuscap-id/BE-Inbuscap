@@ -113,21 +113,43 @@ func (ct *controller) Update() echo.HandlerFunc {
 
 func (ct *controller) GetAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		proposals, totalPage, err := ct.s.GetAll(c.QueryParam("page"))
+		data, total_pages, err := ct.s.GetAll(c.QueryParam("page"))
 		if err != nil {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
-		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success get posts", proposals, map[string]any{"total_pages": totalPage}))
+
+		var dataResponse []ProposalResponse
+		helper.ConvertStruct(&data, &dataResponse)
+
+		return c.JSON(helper.ResponseFormat(http.StatusCreated, "Successfully Get All Proposals", dataResponse,
+			map[string]any{
+				"pagination": map[string]any{
+					"page": func(p string) int {
+						page, _ := strconv.Atoi(p)
+						if page <= 0 {
+							page = 1
+						}
+						return page
+					}(c.QueryParam("page")),
+					"page_size":   10,
+					"total_pages": total_pages,
+				},
+			},
+		))
 	}
 }
 
 func (ct *controller) GetDetail() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		detailProposal, err := ct.s.GetDetail(c.Param("proposal_id"))
+		data, err := ct.s.GetDetail(c.Param("proposal_id"))
 		if err != nil {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
-		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success get detail post", detailProposal))
+
+		var dataResponse ProposalDetailResponse
+		helper.ConvertStruct(&data, &dataResponse)
+
+		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success get detail post", dataResponse))
 	}
 }
 

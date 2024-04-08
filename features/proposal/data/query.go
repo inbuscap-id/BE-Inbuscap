@@ -4,7 +4,6 @@ import (
 	"BE-Inbuscap/features/proposal"
 	"BE-Inbuscap/helper"
 	"errors"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -20,13 +19,10 @@ func New(db *gorm.DB) proposal.Model {
 }
 
 func (m *model) Create(data proposal.Proposal) error {
-	data.CreatedAt = time.Now().UTC()
-	data.UpdatedAt = time.Now().UTC()
 	return m.connection.Create(&data).Error
 }
 
 func (m *model) Update(user_id string, proposal_id string, data proposal.Proposal) error {
-	data.UpdatedAt = time.Now().UTC()
 	if query := m.connection.Model(&data).Where("user_id = ? AND id = ?", user_id, proposal_id).Updates(&data); query.Error != nil {
 		return errors.New(helper.ErrorGeneralDatabase)
 	} else if query.RowsAffected == 0 {
@@ -40,7 +36,7 @@ func (m *model) GetAll(page int) ([]proposal.Proposal, int, error) {
 		page = 1
 	}
 	var result []proposal.Proposal
-	err := m.connection.Limit(10).Offset(page*10 - 10).Find(&result).Error
+	err := m.connection.Table("Proposals").Select("Proposals.*, SUM(investments.amount) AS collected").Group("Proposals.id").Joins("JOIN investments ON investments.proposal_id = proposals.id").Limit(10).Offset(page*10 - 10).Scan(&result).Error
 
 	var numberOfProposals int
 	m.connection.Table("Proposals").Select("COUNT(ID)").Scan(&numberOfProposals)
@@ -49,7 +45,7 @@ func (m *model) GetAll(page int) ([]proposal.Proposal, int, error) {
 
 func (m *model) GetDetail(id_proposal string) (proposal.Proposal, error) {
 	var result proposal.Proposal
-	err := m.connection.Joins("User").Where("proposals.id = ?", id_proposal).Find(&result).Error
+	err := m.connection.Select("*, SUM(investments.amount) AS collected").Joins("User").Joins("JOIN investments ON investments.proposal_id = proposals.id").Where("proposals.id = ?", id_proposal).Find(&result).Error
 	return result, err
 }
 
