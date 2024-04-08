@@ -61,6 +61,7 @@ type Proposal struct {
 	Capital     int
 	Share       int
 	Status      int
+	Collected   int
 	Investments []Investment
 	Reports     []Report
 }
