@@ -63,7 +63,7 @@ func (ct *controller) Create() echo.HandlerFunc {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
 
-		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success create post", nil))
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "success create post", nil))
 	}
 }
 
@@ -107,7 +107,7 @@ func (ct *controller) Update() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
-		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success update post", nil))
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "success update post", nil))
 	}
 }
 
@@ -121,7 +121,7 @@ func (ct *controller) GetAll() echo.HandlerFunc {
 		var dataResponse []ProposalResponse
 		helper.ConvertStruct(&data, &dataResponse)
 
-		return c.JSON(helper.ResponseFormat(http.StatusCreated, "Successfully Get All Proposals", dataResponse,
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "Successfully Get All Proposals", dataResponse,
 			map[string]any{
 				"pagination": map[string]any{
 					"page": func(p string) int {
@@ -149,7 +149,7 @@ func (ct *controller) GetDetail() echo.HandlerFunc {
 		var dataResponse ProposalDetailResponse
 		helper.ConvertStruct(&data, &dataResponse)
 
-		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success get detail post", dataResponse))
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "success get detail post", dataResponse))
 	}
 }
 
@@ -165,12 +165,12 @@ func (ct *controller) Delete() echo.HandlerFunc {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
 
-		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success delete post", nil))
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "success delete post", nil))
 	}
 }
 
 func (ct *controller) Archive() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success archive post", nil))
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "success archive post", nil))
 	}
 }

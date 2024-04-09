@@ -51,11 +51,11 @@ func (m *model) GetAll(user_id uint, page int) (interface{}, int, error) {
 		invest.Proposal
 		Amount int
 	}
-	err := m.connection.Table("proposals").Select("proposals.*, SUM(investments.amount) AS collected, SUM(CASE WHEN investments.user_id = ? THEN investments.amount ELSE 0 END) AS amount", user_id).Group("proposals.id").Joins("JOIN investments ON investments.proposal_id = proposals.id").Having("amount <> 0").Limit(10).Offset(page*10 - 10).Scan(&result).Error
+	err := m.connection.Table("proposals").Select("proposals.*, SUM(investments.amount) AS collected, SUM(CASE WHEN investments.user_id = ? THEN investments.amount ELSE 0 END) AS amount", user_id).Group("proposals.id").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Having("amount <> 0").Limit(10).Offset(page*10 - 10).Scan(&result).Error
 
 	var total_pages int
 	m.connection.Table("investments").Select("COUNT(ID)").Group("proposal_id").Scan(&total_pages)
-	return result, total_pages % 10, err
+	return result, (total_pages + 9) / 10, err
 }
 
 func (m *model) GetDetail(user_id uint, proposal_id int) (interface{}, error) {

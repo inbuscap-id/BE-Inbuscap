@@ -82,14 +82,25 @@ func (s *services) GetAll(page string) ([]proposal.Proposal, int, error) {
 	if err != nil {
 		return []proposal.Proposal{}, 0, errors.New(helper.ErrorGeneralDatabase)
 	}
+
+	if len(listProposal) == 0 {
+		return []proposal.Proposal{}, 0, nil
+	}
+
 	return listProposal, totalPage, nil
 }
 
 func (s *services) GetDetail(id_proposal string) (proposal.Proposal, error) {
 	detileProposal, err := s.m.GetDetail(id_proposal)
+
+	if detileProposal.Title == "" && detileProposal.Capital == 0 {
+		return proposal.Proposal{}, errors.New(helper.ErrorDatabaseNotFound)
+	}
+
 	if err != nil {
 		return proposal.Proposal{}, errors.New(helper.ErrorGeneralDatabase)
 	}
+
 	return detileProposal, nil
 }
 

@@ -36,16 +36,16 @@ func (m *model) GetAll(page int) ([]proposal.Proposal, int, error) {
 		page = 1
 	}
 	var result []proposal.Proposal
-	err := m.connection.Table("proposals").Select("proposals.*, SUM(investments.amount) AS collected").Group("proposals.id").Joins("JOIN investments ON investments.proposal_id = proposals.id").Limit(10).Offset(page*10 - 10).Scan(&result).Error
+	err := m.connection.Table("proposals").Select("proposals.*, SUM(investments.amount) AS collected").Group("proposals.id").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Limit(10).Offset(page*10 - 10).Scan(&result).Error
 
 	var numberOfProposals int
 	m.connection.Table("proposals").Select("COUNT(ID)").Scan(&numberOfProposals)
-	return result, numberOfProposals % 10, err
+	return result, (numberOfProposals + 9) / 10, err
 }
 
 func (m *model) GetDetail(id_proposal string) (proposal.Proposal, error) {
 	var result proposal.Proposal
-	err := m.connection.Select("*, SUM(investments.amount) AS collected").Joins("User").Joins("JOIN investments ON investments.proposal_id = proposals.id").Where("proposals.id = ?", id_proposal).Find(&result).Error
+	err := m.connection.Select("*, proposals.id as id, SUM(investments.amount) AS collected").Preload("User").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Where("proposals.id = ?", id_proposal).Find(&result).Error
 	return result, err
 }
 
