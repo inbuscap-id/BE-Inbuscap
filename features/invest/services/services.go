@@ -5,6 +5,7 @@ import (
 	"BE-Inbuscap/helper"
 	"BE-Inbuscap/middlewares"
 	"errors"
+	"reflect"
 	"strconv"
 
 	"github.com/go-playground/validator/v10"
@@ -107,6 +108,10 @@ func (s *services) GetAll(token *jwt.Token, page string) (interface{}, int, erro
 	data, total_pages, err := s.m.GetAll(uint(user_id), page_int)
 	if err != nil {
 		return nil, 0, errors.New(helper.ErrorGeneralDatabase)
+	}
+
+	if reflect.ValueOf(data).Len() == 0 {
+		return []struct{}{}, 0, nil
 	}
 
 	// Finish

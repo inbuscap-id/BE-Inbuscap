@@ -1,6 +1,7 @@
 package data
 
 import (
+	"BE-Inbuscap/features/invest"
 	"BE-Inbuscap/features/proposal"
 
 	"gorm.io/gorm"
@@ -28,13 +29,7 @@ type User struct {
 
 type Proposal proposal.Proposal
 
-type Investment struct {
-	gorm.Model
-	Proposal_id uint `gorm:"primarykey"`
-	User_id     uint `gorm:"primarykey"`
-	Amount      int
-	Status      int
-}
+type Investment invest.Investment
 
 type Report struct {
 	gorm.Model
@@ -46,10 +41,9 @@ type Transaction struct {
 	gorm.Model
 	OrderID string `gorm:"unique"`
 	UserID  uint
-
-	Amount int
-	Status string
-	Token  string
-	Url    string
-	User   User `gorm:"foreignKey:UserID"`
+	Amount  int
+	Status  string
+	Token   string
+	Url     string
+	User    User `gorm:"foreignKey:UserID"`
 }
