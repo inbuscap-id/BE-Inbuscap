@@ -218,3 +218,8 @@ func (s *service) GetVerifications(paginasi helper.Pagination, status int) ([]us
 	}
 	return result, count, nil
 }
+
+func (s *service) ChangeStatus(userID uint, status int) error {
+	err := s.model.ChangeStatus(userID, status)
+	return err
+}

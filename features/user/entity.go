@@ -17,7 +17,7 @@ type Controller interface {
 	Delete() echo.HandlerFunc
 	AddVerification() echo.HandlerFunc
 	GetVerifications() echo.HandlerFunc
-	// Verify() echo.HandlerFunc
+	ChangeStatus() echo.HandlerFunc
 }
 
 type Service interface {
@@ -28,6 +28,7 @@ type Service interface {
 	Delete(token *jwt.Token) error
 	AddVerification(token *jwt.Token, uploads []*multipart.FileHeader) error
 	GetVerifications(paginasi helper.Pagination, status int) ([]User, int, error)
+	ChangeStatus(userID uint, status int) error
 }
 
 type Model interface {
@@ -37,6 +38,7 @@ type Model interface {
 	Update(data User) error
 	Delete(id string) error
 	GetVerifications(paginasi helper.Pagination, status int) ([]User, int, error)
+	ChangeStatus(userID uint, status int) error
 }
 
 // Structur Data

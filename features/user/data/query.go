@@ -135,3 +135,12 @@ func (m *model) GetVerifications(paginasi helper.Pagination, status int) ([]user
 	}
 	return results, int(count), nil
 }
+
+func (m *model) ChangeStatus(userID uint, status int) error {
+	var result user.User
+	err := m.connection.Where("id = ?", userID).First(&result).Error
+	result.IsActive = status
+	err = m.connection.Save(&result).Error
+
+	return err
+}
