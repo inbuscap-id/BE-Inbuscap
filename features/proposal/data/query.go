@@ -36,10 +36,10 @@ func (m *model) GetAll(page int) ([]proposal.Proposal, int, error) {
 		page = 1
 	}
 	var result []proposal.Proposal
-	err := m.connection.Table("Proposals").Select("Proposals.*, SUM(investments.amount) AS collected").Group("Proposals.id").Joins("JOIN investments ON investments.proposal_id = proposals.id").Limit(10).Offset(page*10 - 10).Scan(&result).Error
+	err := m.connection.Table("proposals").Select("proposals.*, SUM(investments.amount) AS collected").Group("proposals.id").Joins("JOIN investments ON investments.proposal_id = proposals.id").Limit(10).Offset(page*10 - 10).Scan(&result).Error
 
 	var numberOfProposals int
-	m.connection.Table("Proposals").Select("COUNT(ID)").Scan(&numberOfProposals)
+	m.connection.Table("proposals").Select("COUNT(ID)").Scan(&numberOfProposals)
 	return result, numberOfProposals % 10, err
 }
 

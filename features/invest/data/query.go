@@ -29,7 +29,7 @@ func (m *model) SendCapital(data invest.Investment) error {
 
 func (m *model) CancelSendCapital(data invest.Investment) error {
 	var amount int
-	m.connection.Table("Investments").Select("SUM(amount) AS amount").Where("user_id = ? AND proposal_id = ?", data.User_id, data.Proposal_id).Scan(&amount)
+	m.connection.Table("investments").Select("SUM(amount) AS amount").Where("user_id = ? AND proposal_id = ?", data.User_id, data.Proposal_id).Scan(&amount)
 	if amount <= 0 {
 		return errors.New(helper.ErrorUserInput)
 	}
@@ -51,10 +51,10 @@ func (m *model) GetAll(user_id uint, page int) (interface{}, int, error) {
 		invest.Proposal
 		Amount int
 	}
-	err := m.connection.Table("Proposals").Select("Proposals.*, SUM(investments.amount) AS collected, SUM(CASE WHEN investments.user_id = ? THEN investments.amount ELSE 0 END) AS amount", user_id).Group("Proposals.id").Joins("JOIN investments ON investments.proposal_id = proposals.id").Having("amount <> 0").Limit(10).Offset(page*10 - 10).Scan(&result).Error
+	err := m.connection.Table("proposals").Select("proposals.*, SUM(investments.amount) AS collected, SUM(CASE WHEN investments.user_id = ? THEN investments.amount ELSE 0 END) AS amount", user_id).Group("proposals.id").Joins("JOIN investments ON investments.proposal_id = proposals.id").Having("amount <> 0").Limit(10).Offset(page*10 - 10).Scan(&result).Error
 
 	var total_pages int
-	m.connection.Table("Investments").Select("COUNT(ID)").Group("proposal_id").Scan(&total_pages)
+	m.connection.Table("investments").Select("COUNT(ID)").Group("proposal_id").Scan(&total_pages)
 	return result, total_pages % 10, err
 }
 
