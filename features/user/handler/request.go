@@ -22,3 +22,6 @@ type UpdateRequest struct {
 	NPWP      string `json:"npwp" form:"npwp"`
 	Password  string `json:"password" form:"password"`
 }
+type ChangeStatus struct {
+	IsActive int `json:"is_active" form:"is_active"`
+}

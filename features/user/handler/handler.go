@@ -233,3 +233,35 @@ func (ct *controller) GetVerifications() echo.HandlerFunc {
 		return c.JSON(helper.ResponseFormatArray(http.StatusOK, "User list sucessfully retrieved", payloads, paginasi))
 	}
 }
+
+func (ct *controller) ChangeStatus() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		stringID, err := strconv.Atoi(c.Param("user_id"))
+		if err != nil {
+			log.Println("error mengambil user id,", err.Error())
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+
+		}
+		id := uint(stringID)
+		var Req ChangeStatus
+		err = c.Bind(&Req)
+		if err != nil {
+			log.Println("error mengambil req body,", err.Error())
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+
+		}
+		err = ct.service.ChangeStatus(id, int(Req.IsActive))
+		if err != nil {
+			log.Println("error saat mengubah data,", err.Error())
+			if strings.Contains(err.Error(), "found") {
+				return c.JSON(helper.ResponseFormat(http.StatusNotFound, helper.ErrorDatabaseNotFound))
+
+			}
+			return c.JSON(helper.ResponseFormat(http.StatusInternalServerError, helper.ErrorGeneralServer))
+
+		}
+
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "Successfully Updated"))
+
+	}
+}
