@@ -99,3 +99,16 @@ func (m *model) GetVerifications(page int, status int) ([]proposal.Proposal, int
 	}
 	return result, (len(total) + 9) / 10, users, nil
 }
+
+func (m *model) ChangeStatus(id uint, status int) error {
+	var result proposal.Proposal
+	err := m.connection.Where("id = ?", id).First(&result).Error
+	if err != nil {
+		log.Println("error mengambil data", err.Error())
+		return err
+	}
+	result.Status = status
+	err = m.connection.Save(&result).Error
+
+	return err
+}

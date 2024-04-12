@@ -139,6 +139,10 @@ func (m *model) GetVerifications(paginasi helper.Pagination, status int) ([]user
 func (m *model) ChangeStatus(userID uint, status int) error {
 	var result user.User
 	err := m.connection.Where("id = ?", userID).First(&result).Error
+	if err != nil {
+		log.Println("error mengambil data", err.Error())
+		return err
+	}
 	result.IsActive = status
 	err = m.connection.Save(&result).Error
 
