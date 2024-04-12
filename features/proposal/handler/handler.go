@@ -177,32 +177,63 @@ func (ct *controller) Archive() echo.HandlerFunc {
 
 func (ct *controller) GetVerifications() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		data, total_pages, users, err := ct.s.GetVerifications(c.QueryParam("page"), c.QueryParam("status"))
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if err != nil || page <= 0 {
+			page = 1
+		}
+		status, err := strconv.Atoi(c.QueryParam("status"))
+		if err != nil || status <= 0 {
+			status = 0
+		}
+		data, total_pages, users, err := ct.s.GetVerifications(page, status)
 		if err != nil {
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
-
+		var paginasi helper.Pagination
+		paginasi.Page = page
+		paginasi.PageSize = 10
 		var dataResponse []VerificationResponse
 		helper.ConvertStruct(&data, &dataResponse)
 		for i := range dataResponse {
 			dataResponse[i].Owner = users[i]
 		}
-		page, _ := strconv.Atoi(c.QueryParam("page"))
-		if page <= 0 {
-			page = 1
-		}
+		paginasi.TotalPages = total_pages
 		if page > total_pages {
 			return c.JSON(helper.ResponseFormat(http.StatusNotFound, "index out of bounds"))
 
 		}
-		return c.JSON(helper.ResponseFormat(http.StatusCreated, "Successfully Get All Proposals", dataResponse,
-			map[string]any{
-				"pagination": map[string]any{
-					"page":        page,
-					"page_size":   10,
-					"total_pages": total_pages,
-				},
-			},
-		))
+		return c.JSON(helper.ResponseFormatArray(http.StatusOK, "data retrieved successfully", dataResponse, paginasi))
+	}
+}
+
+func (ct *controller) ChangeStatus() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		stringID, err := strconv.Atoi(c.Param("proposal_id"))
+		if err != nil {
+			log.Println("error mengambil user id,", err.Error())
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+
+		}
+		id := uint(stringID)
+		var Req ChangeStatus
+		err = c.Bind(&Req)
+		if err != nil {
+			log.Println("error mengambil req body,", err.Error())
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+
+		}
+		err = ct.s.ChangeStatus(id, int(Req.Status))
+		if err != nil {
+			log.Println("error saat mengubah data,", err.Error())
+			if strings.Contains(err.Error(), "found") {
+				return c.JSON(helper.ResponseFormat(http.StatusNotFound, helper.ErrorDatabaseNotFound))
+
+			}
+			return c.JSON(helper.ResponseFormat(http.StatusInternalServerError, helper.ErrorGeneralServer))
+
+		}
+
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "Successfully Updated"))
+
 	}
 }

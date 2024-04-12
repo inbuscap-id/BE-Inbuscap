@@ -9,3 +9,6 @@ type EditPostRequest struct {
 	Image   string `json:"image" form:"image"`
 	Caption string `json:"caption" form:"caption"`
 }
+type ChangeStatus struct {
+	Status int `json:"status" form:"status"`
+}

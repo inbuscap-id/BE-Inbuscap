@@ -41,7 +41,7 @@ func proposalRoute(c *echo.Echo, pc proposal.Controller, config echo.MiddlewareF
 	c.DELETE("/proposals/:proposal_id", pc.Delete(), config)
 	// c.POST("/proposals/:proposal_id", pc.Create(), config)
 	c.GET("/verifications/proposals", pc.GetVerifications(), config, middlewares.CheckRole)
-	// c.PUT("/verifications/proposals/:proposal_id", pc.ChangeStatus(), config, middlewares.CheckRole)
+	c.PUT("/verifications/proposals/:proposal_id", pc.ChangeStatus(), config, middlewares.CheckRole)
 }
 
 func investRoute(c *echo.Echo, cc invest.Controller, config echo.MiddlewareFunc) {
