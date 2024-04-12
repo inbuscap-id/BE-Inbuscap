@@ -63,7 +63,7 @@ func (m *model) Archive() error {
 	return nil
 }
 
-func (m *model) GetVerifications(page int, status int) ([]proposal.Proposal, int, error) {
+func (m *model) GetVerifications(page int, status int) ([]proposal.Proposal, int, []string, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -71,11 +71,31 @@ func (m *model) GetVerifications(page int, status int) ([]proposal.Proposal, int
 		status = 0
 	}
 	var result []proposal.Proposal
-	err := m.connection.Table("Proposals").Where(" status = ?", status).Select("Proposals.*, SUM(investments.amount) AS collected").Group("Proposals.id").Joins("JOIN investments ON investments.proposal_id = proposals.id").Limit(10).Offset(page*10 - 10).Scan(&result).Error
+	var total []proposal.Proposal
+	err := m.connection.Order("updated_at desc").Where(" status = ?", status).
+		Find(&total).Error
 	if err != nil {
 		log.Println("error mengambil proposal", err.Error())
+		return nil, 0, nil, err
+
 	}
-	var numberOfProposals int
-	m.connection.Table("Proposals").Select("COUNT(ID)").Scan(&numberOfProposals)
-	return result, numberOfProposals % 10, err
+	err = m.connection.Order("updated_at desc").Where(" status = ?", status).
+		Limit(10).Offset(page*10 - 10).Find(&result).Error
+
+	if err != nil {
+		log.Println("error mengambil proposal", err.Error())
+		return nil, 0, nil, err
+
+	}
+	var users []string
+	for _, val := range result {
+		var user proposal.User
+		err = m.connection.Where("id = ?", val.User_id).First(&user).Error
+		if err != nil {
+			log.Println("error mengambil user", err.Error())
+			return nil, 0, nil, err
+		}
+		users = append(users, user.Fullname)
+	}
+	return result, (len(total) + 9) / 10, users, nil
 }

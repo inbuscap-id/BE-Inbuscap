@@ -26,7 +26,7 @@ type Model interface {
 	GetDetail(id_proposal string) (Proposal, error)
 	Delete(id string, prososal_id string) error
 	Archive() error
-	GetVerifications(page int, status int) ([]Proposal, int, error)
+	GetVerifications(page int, status int) ([]Proposal, int, []string, error)
 }
 
 type Services interface {
@@ -36,7 +36,7 @@ type Services interface {
 	GetDetail(id_proposal string) (Proposal, error)
 	Delete(token *jwt.Token, prososal_id string) error
 	Archive() error
-	GetVerifications(page string, status string) ([]Proposal, int, error)
+	GetVerifications(page string, status string) ([]Proposal, int, []string, error)
 }
 
 type User struct {
