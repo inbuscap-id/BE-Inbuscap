@@ -4,6 +4,7 @@ import (
 	"BE-Inbuscap/features/proposal"
 	"BE-Inbuscap/helper"
 	"errors"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -60,4 +61,41 @@ func (m *model) Delete(id string, prososal_id string) error {
 
 func (m *model) Archive() error {
 	return nil
+}
+
+func (m *model) GetVerifications(page int, status int) ([]proposal.Proposal, int, []string, error) {
+	if page < 1 {
+		page = 1
+	}
+	if status == 1 {
+		status = 0
+	}
+	var result []proposal.Proposal
+	var total []proposal.Proposal
+	err := m.connection.Order("updated_at desc").Where(" status = ?", status).
+		Find(&total).Error
+	if err != nil {
+		log.Println("error mengambil proposal", err.Error())
+		return nil, 0, nil, err
+
+	}
+	err = m.connection.Order("updated_at desc").Where(" status = ?", status).
+		Limit(10).Offset(page*10 - 10).Find(&result).Error
+
+	if err != nil {
+		log.Println("error mengambil proposal", err.Error())
+		return nil, 0, nil, err
+
+	}
+	var users []string
+	for _, val := range result {
+		var user proposal.User
+		err = m.connection.Where("id = ?", val.User_id).First(&user).Error
+		if err != nil {
+			log.Println("error mengambil user", err.Error())
+			return nil, 0, nil, err
+		}
+		users = append(users, user.Fullname)
+	}
+	return result, (len(total) + 9) / 10, users, nil
 }

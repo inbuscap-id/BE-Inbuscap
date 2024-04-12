@@ -33,3 +33,14 @@ type ProposalDetailResponse struct {
 	Status      int    `json:"status"`
 	Collected   int    `json:"collected"`
 }
+
+type VerificationResponse struct {
+	ID          uint   `json:"id"`
+	Title       string `json:"title"`
+	Owner       string `json:"owner"`
+	Description string `json:"description"`
+	Capital     int    `json:"capital"`
+	Share       int    `json:"share"`
+	Status      int    `json:"status"`
+	Proposal    string `json:"proposal"`
+}
