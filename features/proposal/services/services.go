@@ -120,3 +120,20 @@ func (s *services) Delete(token *jwt.Token, prososal_id string) error {
 func (s *services) Archive() error {
 	return nil
 }
+func (s *services) GetVerifications(page string, status string) ([]proposal.Proposal, int, error) {
+	var page_int = 0
+	page_int, err := strconv.Atoi(page)
+	if page != "" && err != nil {
+		return []proposal.Proposal{}, 0, errors.New(helper.ErrorUserInput)
+	}
+	status_int, err := strconv.Atoi(status)
+	if page != "" && err != nil {
+		return []proposal.Proposal{}, 0, errors.New(helper.ErrorUserInput)
+	}
+
+	listProposal, totalPage, err := s.m.GetVerifications(page_int, status_int)
+	if err != nil {
+		return []proposal.Proposal{}, 0, errors.New(helper.ErrorGeneralDatabase)
+	}
+	return listProposal, totalPage, nil
+}

@@ -174,3 +174,31 @@ func (ct *controller) Archive() echo.HandlerFunc {
 		return c.JSON(helper.ResponseFormat(http.StatusOK, "success archive post", nil))
 	}
 }
+
+func (ct *controller) GetVerifications() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		data, total_pages, err := ct.s.GetVerifications(c.QueryParam("page"), c.QueryParam("status"))
+		if err != nil {
+			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
+		}
+
+		var dataResponse []ProposalResponse
+		helper.ConvertStruct(&data, &dataResponse)
+
+		return c.JSON(helper.ResponseFormat(http.StatusCreated, "Successfully Get All Proposals", dataResponse,
+			map[string]any{
+				"pagination": map[string]any{
+					"page": func(p string) int {
+						page, _ := strconv.Atoi(p)
+						if page <= 0 {
+							page = 1
+						}
+						return page
+					}(c.QueryParam("page")),
+					"page_size":   10,
+					"total_pages": total_pages,
+				},
+			},
+		))
+	}
+}
