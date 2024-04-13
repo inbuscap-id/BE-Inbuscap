@@ -12,6 +12,7 @@ type Controller interface {
 	Create() echo.HandlerFunc
 	Update() echo.HandlerFunc
 	GetAll() echo.HandlerFunc
+	GetAllMy() echo.HandlerFunc
 	GetDetail() echo.HandlerFunc
 	Delete() echo.HandlerFunc
 	Archive() echo.HandlerFunc
@@ -23,6 +24,7 @@ type Model interface {
 	Create(data Proposal) error
 	Update(user_id string, proposal_id string, data Proposal) error
 	GetAll(page int) ([]Proposal, int, error)
+	GetAllMy(page int, user_id string) ([]Proposal, int, error)
 	GetDetail(id_proposal string) (Proposal, error)
 	Delete(id string, prososal_id string) error
 	Archive() error
@@ -34,6 +36,7 @@ type Services interface {
 	Create(token *jwt.Token, image *multipart.FileHeader, document *multipart.FileHeader, data Proposal) error
 	Update(token *jwt.Token, proposal_id string, image *multipart.FileHeader, document *multipart.FileHeader, data Proposal) error
 	GetAll(page string) ([]Proposal, int, error)
+	GetAllMy(token *jwt.Token, page string) ([]Proposal, int, error)
 	GetDetail(id_proposal string) (Proposal, error)
 	Delete(token *jwt.Token, prososal_id string) error
 	Archive() error

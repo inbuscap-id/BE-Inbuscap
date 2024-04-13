@@ -44,6 +44,18 @@ func (m *model) GetAll(page int) ([]proposal.Proposal, int, error) {
 	return result, (numberOfProposals + 9) / 10, err
 }
 
+func (m *model) GetAllMy(page int, user_id string) ([]proposal.Proposal, int, error) {
+	if page < 1 {
+		page = 1
+	}
+	var result []proposal.Proposal
+	err := m.connection.Table("proposals").Select("proposals.*, SUM(investments.amount) AS collected").Group("proposals.id").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Where("proposals.user_id = ?", user_id).Limit(10).Offset(page*10 - 10).Scan(&result).Error
+
+	var numberOfProposals int
+	m.connection.Table("proposals").Select("COUNT(ID)").Scan(&numberOfProposals)
+	return result, (numberOfProposals + 9) / 10, err
+}
+
 func (m *model) GetDetail(id_proposal string) (proposal.Proposal, error) {
 	var result proposal.Proposal
 	err := m.connection.Select("*, proposals.id as id, SUM(investments.amount) AS collected").Preload("User").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Where("proposals.id = ?", id_proposal).Find(&result).Error

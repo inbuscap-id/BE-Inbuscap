@@ -90,6 +90,28 @@ func (s *services) GetAll(page string) ([]proposal.Proposal, int, error) {
 	return listProposal, totalPage, nil
 }
 
+func (s *services) GetAllMy(token *jwt.Token, page string) ([]proposal.Proposal, int, error) {
+	var page_int = 0
+	page_int, err := strconv.Atoi(page)
+	if page != "" && err != nil {
+		return []proposal.Proposal{}, 0, errors.New(helper.ErrorUserInput)
+	}
+
+	// Get ID From Token
+	decodeID := middlewares.DecodeToken(token)
+
+	listProposal, totalPage, err := s.m.GetAllMy(page_int, decodeID)
+	if err != nil {
+		return []proposal.Proposal{}, 0, errors.New(helper.ErrorGeneralDatabase)
+	}
+
+	if len(listProposal) == 0 {
+		return []proposal.Proposal{}, 0, nil
+	}
+
+	return listProposal, totalPage, nil
+}
+
 func (s *services) GetDetail(id_proposal string) (proposal.Proposal, error) {
 	detileProposal, err := s.m.GetDetail(id_proposal)
 

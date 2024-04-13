@@ -139,6 +139,39 @@ func (ct *controller) GetAll() echo.HandlerFunc {
 	}
 }
 
+func (ct *controller) GetAllMy() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token, ok := c.Get("user").(*jwt.Token)
+		if !ok {
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+		}
+
+		data, total_pages, err := ct.s.GetAllMy(token, c.QueryParam("page"))
+		if err != nil {
+			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
+		}
+
+		var dataResponse []ProposalResponse
+		helper.ConvertStruct(&data, &dataResponse)
+
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "Successfully Get All MyProposals", dataResponse,
+			map[string]any{
+				"pagination": map[string]any{
+					"page": func(p string) int {
+						page, _ := strconv.Atoi(p)
+						if page <= 0 {
+							page = 1
+						}
+						return page
+					}(c.QueryParam("page")),
+					"page_size":   10,
+					"total_pages": total_pages,
+				},
+			},
+		))
+	}
+}
+
 func (ct *controller) GetDetail() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		data, err := ct.s.GetDetail(c.Param("proposal_id"))
