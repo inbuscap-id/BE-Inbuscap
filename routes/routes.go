@@ -37,6 +37,7 @@ func proposalRoute(c *echo.Echo, pc proposal.Controller, config echo.MiddlewareF
 	c.POST("/proposals", pc.Create(), config)
 	c.PUT("/proposals/:proposal_id", pc.Update(), config)
 	c.GET("/proposals", pc.GetAll())
+	c.GET("/myproposals", pc.GetAllMy(), config)
 	c.GET("/proposals/:proposal_id", pc.GetDetail())
 	c.DELETE("/proposals/:proposal_id", pc.Delete(), config)
 	// c.POST("/proposals/:proposal_id", pc.Create(), config)
