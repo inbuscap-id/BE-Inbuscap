@@ -145,8 +145,8 @@ func (s *service) Update(token *jwt.Token, update_data user.User, avatar *multip
 		}
 		update_data.Password = newPassword
 	}
+
 	// update avatar bila ada
-	log.Println(avatar.Filename)
 	if avatar != nil {
 		link, err := utils.UploadImage(avatar)
 		if err != nil {
