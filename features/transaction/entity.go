@@ -48,7 +48,7 @@ type Repository interface {
 
 type Service interface {
 	AddTransaction(token *jwt.Token, amount int) (Transaction, error)
-	AddCoreTransaction(token *jwt.Token, amount int, bank string) (Transaction, error)
+	AddCoreTransaction(token *jwt.Token, amount int, bank string) (*coreapi.ChargeResponse, error)
 
 	CheckTransaction(transactionID uint) (Transaction, error)
 	CallBack(noInvoice string) (Transaction, error)

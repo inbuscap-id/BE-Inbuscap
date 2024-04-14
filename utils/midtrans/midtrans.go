@@ -12,10 +12,13 @@ import (
 
 func MidtransTokenCore(bank string, amount int) (*coreapi.ChargeResponse, *midtrans.Error) {
 	var c = coreapi.Client{}
+	cfg := config.InitConfig()
+	c.New(cfg.MIDTRANS_SERVER_KEY, midtrans.Sandbox)
+	log.Println(cfg.MIDTRANS_SERVER_KEY)
 	newUUID := uuid.New()
 	order := string(newUUID.String())
-	c.New(config.InitConfig().MIDTRANS_SERVER_KEY, midtrans.Sandbox)
-	req := &coreapi.ChargeReq{
+
+	req := coreapi.ChargeReq{
 		TransactionDetails: midtrans.TransactionDetails{
 			OrderID:  order,
 			GrossAmt: int64(amount),
@@ -23,9 +26,11 @@ func MidtransTokenCore(bank string, amount int) (*coreapi.ChargeResponse, *midtr
 		BankTransfer: &coreapi.BankTransferDetails{
 			Bank: midtrans.Bank(bank),
 		},
+		PaymentType: coreapi.CoreapiPaymentType("bank_transfer"),
 	}
+	log.Println(req)
 
-	resp, err := coreapi.ChargeTransaction(req)
+	resp, err := coreapi.ChargeTransaction(&req)
 	if err != nil {
 		log.Println("midtrans error", err.Error())
 		return nil, err

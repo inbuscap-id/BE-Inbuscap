@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	golangjwt "github.com/golang-jwt/jwt/v5"
+	"github.com/midtrans/midtrans-go/coreapi"
 )
 
 type TransactionService struct {
@@ -35,24 +36,24 @@ func (at *TransactionService) AddTransaction(token *golangjwt.Token, amount int)
 	return result, err
 }
 
-func (at *TransactionService) AddCoreTransaction(token *golangjwt.Token, amount int, bank string) (transaction.Transaction, error) {
+func (at *TransactionService) AddCoreTransaction(token *golangjwt.Token, amount int, bank string) (*coreapi.ChargeResponse, error) {
 	userID := jwt.DecodeToken(token)
 	id, err := strconv.Atoi(userID)
 	if err != nil {
 		log.Println("error convert id", err.Error())
-		return transaction.Transaction{}, err
+		return nil, err
 	}
 	resp, er := midtrans.MidtransTokenCore(bank, amount)
 	if er != nil {
 		log.Println(er.Error())
-		return transaction.Transaction{}, er.GetRawError()
+		return nil, errors.New("error di midtrans")
 	}
 	result, err := at.repo.AddCoreTransaction(uint(id), resp)
-	if err != nil {
+	if err != nil || result.ID == 0 {
 		log.Println(err.Error())
-		return transaction.Transaction{}, err
+		return nil, err
 	}
-	return result, err
+	return resp, err
 }
 
 func (ct *TransactionService) CheckTransaction(transactionID uint) (transaction.Transaction, error) {
