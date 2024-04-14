@@ -230,11 +230,15 @@ func (ct *controller) GetVerifications() echo.HandlerFunc {
 		var paginasi helper.Pagination
 		paginasi.Page = page
 		paginasi.PageSize = 10
+
 		var dataResponse []VerificationResponse
 		helper.ConvertStruct(&data, &dataResponse)
+
 		for i := range dataResponse {
 			dataResponse[i].Owner = users[i]
+			dataResponse[i].Document = data[i].Document
 		}
+
 		paginasi.TotalPages = total_pages
 		if page > total_pages {
 			return c.JSON(helper.ResponseFormat(http.StatusNotFound, "index out of bounds"))
