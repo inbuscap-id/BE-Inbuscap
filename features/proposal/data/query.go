@@ -84,14 +84,14 @@ func (m *model) GetVerifications(page int, status int) ([]proposal.Proposal, int
 	}
 	var result []proposal.Proposal
 	var total []proposal.Proposal
-	err := m.connection.Order("updated_at desc").Where(" status = ?", status).
+	err := m.connection.Order("updated_at desc").Where(" status = ? AND deleted_at IS NULL", status).
 		Find(&total).Error
 	if err != nil {
 		log.Println("error mengambil proposal", err.Error())
 		return nil, 0, nil, err
 
 	}
-	err = m.connection.Order("updated_at desc").Where(" status = ?", status).
+	err = m.connection.Order("updated_at desc").Where(" status = ? AND deleted_at IS NULL", status).
 		Limit(10).Offset(page*10 - 10).Find(&result).Error
 
 	if err != nil {
