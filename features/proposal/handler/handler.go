@@ -52,10 +52,16 @@ func (ct *controller) Create() echo.HandlerFunc {
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
 		}
 
+		share, err := strconv.Atoi(c.FormValue("share"))
+		if err != nil {
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+		}
+
 		newProposal := proposal.Proposal{
 			Title:       c.FormValue("title"),
 			Description: c.FormValue("description"),
 			Capital:     capital,
+			Share:       share,
 		}
 
 		err = ct.s.Create(token, fileImage, fileProposal, newProposal)
