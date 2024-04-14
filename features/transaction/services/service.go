@@ -35,6 +35,26 @@ func (at *TransactionService) AddTransaction(token *golangjwt.Token, amount int)
 	return result, err
 }
 
+func (at *TransactionService) AddCoreTransaction(token *golangjwt.Token, amount int, bank string) (transaction.Transaction, error) {
+	userID := jwt.DecodeToken(token)
+	id, err := strconv.Atoi(userID)
+	if err != nil {
+		log.Println("error convert id", err.Error())
+		return transaction.Transaction{}, err
+	}
+	resp, er := midtrans.MidtransTokenCore(bank, amount)
+	if er != nil {
+		log.Println(er.Error())
+		return transaction.Transaction{}, er.GetRawError()
+	}
+	result, err := at.repo.AddCoreTransaction(uint(id), resp)
+	if err != nil {
+		log.Println(err.Error())
+		return transaction.Transaction{}, err
+	}
+	return result, err
+}
+
 func (ct *TransactionService) CheckTransaction(transactionID uint) (transaction.Transaction, error) {
 	result, err := ct.repo.CheckTransactionById(transactionID)
 	if err != nil {

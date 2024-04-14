@@ -5,6 +5,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"github.com/midtrans/midtrans-go/coreapi"
 )
 
 type Transaction struct {
@@ -31,12 +32,15 @@ type Transaction struct {
 
 type Controller interface {
 	AddTransaction() echo.HandlerFunc
+	AddCoreTransaction() echo.HandlerFunc
 	CheckTransaction() echo.HandlerFunc
 	CallBack() echo.HandlerFunc
 }
 
 type Repository interface {
 	AddTransaction(userID uint, amount int) (Transaction, error)
+	AddCoreTransaction(userID uint, transaksi *coreapi.ChargeResponse) (Transaction, error)
+
 	CheckTransaction(orderID string) (*Transaction, error)
 	CheckTransactionById(id uint) (*Transaction, error)
 	Update(item Transaction) (*Transaction, error)
@@ -44,6 +48,8 @@ type Repository interface {
 
 type Service interface {
 	AddTransaction(token *jwt.Token, amount int) (Transaction, error)
+	AddCoreTransaction(token *jwt.Token, amount int, bank string) (Transaction, error)
+
 	CheckTransaction(transactionID uint) (Transaction, error)
 	CallBack(noInvoice string) (Transaction, error)
 }
