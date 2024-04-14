@@ -2,12 +2,36 @@ package midtrans
 
 import (
 	"BE-Inbuscap/config"
+	"log"
 
+	"github.com/google/uuid"
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/coreapi"
 	"github.com/midtrans/midtrans-go/snap"
 )
 
+func MidtransTokenCore(bank string, amount int) (*coreapi.ChargeResponse, *midtrans.Error) {
+	var c = coreapi.Client{}
+	newUUID := uuid.New()
+	order := string(newUUID.String())
+	c.New(config.InitConfig().MIDTRANS_SERVER_KEY, midtrans.Sandbox)
+	req := &coreapi.ChargeReq{
+		TransactionDetails: midtrans.TransactionDetails{
+			OrderID:  order,
+			GrossAmt: int64(amount),
+		},
+		BankTransfer: &coreapi.BankTransferDetails{
+			Bank: midtrans.Bank(bank),
+		},
+	}
+
+	resp, err := coreapi.ChargeTransaction(req)
+	if err != nil {
+		log.Println("midtrans error", err.Error())
+		return nil, err
+	}
+	return resp, nil
+}
 func MidtransCreateToken(orderID string, amount int, namaCustomer string, email string, noHp string) *snap.Response {
 	var s = snap.Client{}
 	s.New(config.InitConfig().MIDTRANS_SERVER_KEY, midtrans.Sandbox)
@@ -35,7 +59,6 @@ func MidtransCreateToken(orderID string, amount int, namaCustomer string, email 
 	}
 
 	snapResp, _ := s.CreateTransaction(req)
-
 	return snapResp
 }
 

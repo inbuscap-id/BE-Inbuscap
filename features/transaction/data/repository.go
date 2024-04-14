@@ -2,8 +2,10 @@ package data
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/google/uuid"
+	"github.com/midtrans/midtrans-go/coreapi"
 
 	"BE-Inbuscap/features/transaction"
 
@@ -53,6 +55,31 @@ func (at *TransactionQuery) AddTransaction(userID uint, amount int) (transaction
 	result.Status = input.Status
 	result.Url = snap.RedirectURL
 	result.Token = snap.Token
+	result.OrderID = input.OrderID
+	result.CreatedAt = input.CreatedAt
+
+	return result, nil
+
+}
+func (at *TransactionQuery) AddCoreTransaction(userID uint, transaksi *coreapi.ChargeResponse) (transaction.Transaction, error) {
+	var input Transaction
+	input.OrderID = transaksi.OrderID
+	input.UserID = userID
+	input.Amount, _ = strconv.Atoi(transaksi.GrossAmount)
+	input.Status = transaksi.TransactionStatus
+	if err := at.db.Create(&input).Error; err != nil {
+		return transaction.Transaction{}, err
+	}
+
+	newUUID := uuid.New()
+	input.OrderID = string(newUUID.String())
+
+	var result transaction.Transaction
+	result.ID = input.ID
+	result.UserId = input.UserID
+	result.Amount = input.Amount
+	result.Status = input.Status
+
 	result.OrderID = input.OrderID
 	result.CreatedAt = input.CreatedAt
 

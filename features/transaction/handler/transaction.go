@@ -59,6 +59,31 @@ func (at *TransactionHandler) AddTransaction() echo.HandlerFunc {
 		return c.JSON(helper.ResponseFormat(http.StatusCreated, "transaction is created", response))
 	}
 }
+func (at *TransactionHandler) AddCoreTransaction() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(TransactionReq)
+		if err := c.Bind(&input); err != nil {
+			log.Println(err.Error())
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+
+		}
+		result, err := at.s.AddCoreTransaction(c.Get("user").(*gojwt.Token), input.Amount, input.Bank)
+
+		if err != nil {
+			c.Logger().Error("terjadi kesalahan", err.Error())
+			if strings.Contains(err.Error(), "duplicate") {
+				return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorGeneralDatabase))
+
+			}
+			log.Println(err.Error())
+
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorDatabaseNotFound))
+
+		}
+
+		return c.JSON(helper.ResponseFormat(http.StatusCreated, "transaction is created", result))
+	}
+}
 
 func (ct *TransactionHandler) CheckTransaction() echo.HandlerFunc {
 	return func(c echo.Context) error {

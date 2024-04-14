@@ -3,8 +3,9 @@ package handler
 import "time"
 
 type TransactionReq struct {
-	UserId uint `json:"user_id"`
-	Amount int  `json:"amount"`
+	UserId uint   `json:"user_id"`
+	Amount int    `json:"amount"`
+	Bank   string `json:"bank"`
 }
 
 type TransactionRes struct {

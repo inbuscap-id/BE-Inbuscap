@@ -35,7 +35,7 @@ func (ct *controller) Create() echo.HandlerFunc {
 
 		fileProposal, err := c.FormFile("proposal")
 		if err != nil {
-			log.Println("error image data:", err.Error())
+			log.Println("error file data:", err.Error())
 			if strings.Contains(err.Error(), "unsupport") {
 				return c.JSON(helper.ResponseFormat(http.StatusUnsupportedMediaType, helper.ErrorUserInputFormat, nil))
 			}
@@ -51,11 +51,16 @@ func (ct *controller) Create() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
 		}
+		share, err := strconv.Atoi(c.FormValue("share"))
+		if err != nil {
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+		}
 
 		newProposal := proposal.Proposal{
 			Title:       c.FormValue("title"),
 			Description: c.FormValue("description"),
 			Capital:     capital,
+			Share:       share,
 		}
 
 		err = ct.s.Create(token, fileImage, fileProposal, newProposal)
@@ -225,11 +230,15 @@ func (ct *controller) GetVerifications() echo.HandlerFunc {
 		var paginasi helper.Pagination
 		paginasi.Page = page
 		paginasi.PageSize = 10
+
 		var dataResponse []VerificationResponse
 		helper.ConvertStruct(&data, &dataResponse)
+
 		for i := range dataResponse {
 			dataResponse[i].Owner = users[i]
+			dataResponse[i].Document = data[i].Document
 		}
+
 		paginasi.TotalPages = total_pages
 		if page > total_pages {
 			return c.JSON(helper.ResponseFormat(http.StatusNotFound, "index out of bounds"))

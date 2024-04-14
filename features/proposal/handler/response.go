@@ -42,5 +42,5 @@ type VerificationResponse struct {
 	Capital     int    `json:"capital"`
 	Share       int    `json:"share"`
 	Status      int    `json:"status"`
-	Proposal    string `json:"proposal"`
+	Document    string `json:"proposal"`
 }
