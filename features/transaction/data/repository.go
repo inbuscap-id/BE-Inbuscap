@@ -2,6 +2,7 @@ package data
 
 import (
 	"errors"
+	"log"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -65,7 +66,9 @@ func (at *TransactionQuery) AddCoreTransaction(userID uint, transaksi *coreapi.C
 	var input Transaction
 	input.OrderID = transaksi.OrderID
 	input.UserID = userID
-	input.Amount, _ = strconv.Atoi(transaksi.GrossAmount)
+	amt, _ := strconv.ParseFloat(transaksi.GrossAmount, 64)
+	log.Println(amt)
+	input.Amount = int(amt)
 	input.Status = transaksi.TransactionStatus
 	if err := at.db.Create(&input).Error; err != nil {
 		return transaction.Transaction{}, err
