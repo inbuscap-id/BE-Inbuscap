@@ -1,7 +1,7 @@
 package data
 
 import (
-	"BE-Inbuscap/features/report"
+	entity "BE-Inbuscap/features/report"
 
 	"gorm.io/gorm"
 )
@@ -10,32 +10,32 @@ type model struct {
 	connection *gorm.DB
 }
 
-func New(db *gorm.DB) report.Model {
+func New(db *gorm.DB) entity.Model {
 	return &model{
 		connection: db,
 	}
 }
 
-func (pm *model) Create() error {
+func (m *model) AddReport(data entity.Report) error {
+	return m.connection.Create(&data).Error
+}
+
+func (m *model) Edit() error {
 	return nil
 }
 
-func (pm *model) Edit() error {
+func (m *model) GetAll() error {
 	return nil
 }
 
-func (pm *model) GetAll() error {
+func (m *model) GetDetail() error {
 	return nil
 }
 
-func (pm *model) GetDetail() error {
+func (m *model) Delete() error {
 	return nil
 }
 
-func (pm *model) Delete() error {
-	return nil
-}
-
-func (pm *model) Archive() error {
+func (m *model) Archive() error {
 	return nil
 }

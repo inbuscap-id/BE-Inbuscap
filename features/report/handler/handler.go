@@ -18,7 +18,7 @@ func NewHandler(service report.Services) report.Controller {
 	}
 }
 
-func (ct *controller) Create() echo.HandlerFunc {
+func (ct *controller) AddReport() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success create post", nil))
 	}

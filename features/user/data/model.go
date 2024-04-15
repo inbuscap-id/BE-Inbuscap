@@ -3,6 +3,7 @@ package data
 import (
 	"BE-Inbuscap/features/invest"
 	"BE-Inbuscap/features/proposal"
+	"BE-Inbuscap/features/report"
 
 	"gorm.io/gorm"
 )
@@ -31,11 +32,7 @@ type Proposal proposal.Proposal
 
 type Investment invest.Investment
 
-type Report struct {
-	gorm.Model
-	Proposal_id uint `gorm:"primarykey"`
-	Document    string
-}
+type Report report.Report
 
 type Transaction struct {
 	gorm.Model

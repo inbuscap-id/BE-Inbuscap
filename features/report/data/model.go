@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type report struct {
+type Report struct {
 	gorm.Model
 	Title   string
 	Image   string
