@@ -80,7 +80,7 @@ func (ct *controller) Update() echo.HandlerFunc {
 			if strings.Contains(err.Error(), "unsupport") {
 				return c.JSON(helper.ResponseFormat(http.StatusUnsupportedMediaType, helper.ErrorUserInputFormat, nil))
 			}
-			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput, nil))
+			fileImage = nil
 		}
 
 		fileProposal, err := c.FormFile("proposal")
@@ -89,7 +89,7 @@ func (ct *controller) Update() echo.HandlerFunc {
 			if strings.Contains(err.Error(), "unsupport") {
 				return c.JSON(helper.ResponseFormat(http.StatusUnsupportedMediaType, helper.ErrorUserInputFormat, nil))
 			}
-			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput, nil))
+			fileImage = nil
 		}
 
 		token, ok := c.Get("user").(*jwt.Token)
@@ -97,15 +97,27 @@ func (ct *controller) Update() echo.HandlerFunc {
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
 		}
 
-		capital, err := strconv.Atoi(c.FormValue("capital"))
-		if err != nil {
-			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+		var capital int
+		if c.FormValue("capital") != "" {
+			capital, err = strconv.Atoi(c.FormValue("capital"))
+			if err != nil {
+				return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+			}
+		}
+
+		var share int
+		if c.FormValue("share") != "" {
+			share, err = strconv.Atoi(c.FormValue("share"))
+			if err != nil {
+				return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+			}
 		}
 
 		dataProposal := proposal.Proposal{
 			Title:       c.FormValue("title"),
 			Description: c.FormValue("description"),
 			Capital:     capital,
+			Share:       share,
 		}
 
 		err = ct.s.Update(token, c.Param("proposal_id"), fileImage, fileProposal, dataProposal)

@@ -55,18 +55,23 @@ func (s *services) Update(token *jwt.Token, proposal_id string, image *multipart
 		return errors.New(helper.ErrorUserInput)
 	}
 
-	imageURL, err := utils.UploadImage(image)
-	if err != nil {
-		return err
+	var imageURL string
+	if image != nil {
+		imageURL, err = utils.UploadImage(image)
+		if err != nil {
+			return err
+		}
+		data.Image = imageURL
 	}
 
-	documentURL, err := utils.UploadImage(document)
-	if err != nil {
-		return err
+	var documentURL string
+	if document != nil {
+		documentURL, err = utils.UploadImage(document)
+		if err != nil {
+			return err
+		}
+		data.Document = documentURL
 	}
-
-	data.Image = imageURL
-	data.Document = documentURL
 
 	return s.m.Update(user_id, proposal_id, data)
 }

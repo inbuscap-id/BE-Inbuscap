@@ -24,6 +24,25 @@ func (m *model) Create(data proposal.Proposal) error {
 }
 
 func (m *model) Update(user_id string, proposal_id string, data proposal.Proposal) error {
+	var selectUpdate []string
+	if data.Title != "" {
+		selectUpdate = append(selectUpdate, "title")
+	}
+	if data.Image != "" {
+		selectUpdate = append(selectUpdate, "image")
+	}
+	if data.Document != "" {
+		selectUpdate = append(selectUpdate, "document")
+	}
+	if data.Capital != 0 {
+		selectUpdate = append(selectUpdate, "capital")
+	}
+	if data.Share != 0 {
+		selectUpdate = append(selectUpdate, "share")
+	}
+	if len(selectUpdate) == 0 {
+		return errors.New(helper.ErrorNoRowsAffected)
+	}
 	if query := m.connection.Model(&data).Where("user_id = ? AND id = ?", user_id, proposal_id).Updates(&data); query.Error != nil {
 		return errors.New(helper.ErrorGeneralDatabase)
 	} else if query.RowsAffected == 0 {
