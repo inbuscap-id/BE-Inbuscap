@@ -154,3 +154,8 @@ func (s *services) ChangeStatus(id uint, status int) error {
 	err := s.m.ChangeStatus(id, status)
 	return err
 }
+
+func (s *services) GetVerification(proposalId uint) (proposal.Proposal, string, error) {
+	result, name, err := s.m.GetVerification(proposalId)
+	return result, name, err
+}

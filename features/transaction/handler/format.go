@@ -18,7 +18,7 @@ type TransactionRes struct {
 }
 type CoreTransactionRes struct {
 	OrderID   string      `json:"order_id"`
-	Amount    string      `json:"amount"`
+	Amount    int         `json:"amount"`
 	Status    string      `json:"status"`
 	VaNumbers interface{} `json:"va_numbers"`
 	CreatedAt string      `json:"created_at"`
