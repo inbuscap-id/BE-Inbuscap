@@ -88,10 +88,6 @@ func (m *model) Update(data user.User) error {
 }
 
 func (m *model) Delete(id string) error {
-	if query := m.connection.Table("users").Where("id = ?", id).Select("email", "handphone", "ktp", "npwp").Updates(user.User{Email: "", Handphone: "", KTP: "", NPWP: ""}); query.Error != nil {
-		return errors.New(helper.ErrorDatabaseNotFound)
-	}
-
 	if query := m.connection.Where("id = ?", id).Delete(&user.User{}); query.Error != nil {
 		return errors.New(helper.ErrorGeneralDatabase)
 	} else if query.RowsAffected == 0 {
