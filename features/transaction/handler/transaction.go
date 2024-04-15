@@ -159,6 +159,8 @@ func (cb *TransactionHandler) CallBack() echo.HandlerFunc {
 
 		}
 		var response = TransactionRes{
+			ID:        result.ID,
+			UserId:    result.UserId,
 			OrderID:   result.OrderID,
 			Amount:    result.Amount,
 			Status:    result.Status,
