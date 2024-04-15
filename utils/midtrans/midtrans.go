@@ -11,11 +11,14 @@ import (
 )
 
 func MidtransTokenCore(bank string, amount int) (*coreapi.ChargeResponse, *midtrans.Error) {
-	var c = coreapi.Client{}
+	cfg := config.InitConfig()
+	midtrans.ServerKey = cfg.MIDTRANS_SERVER_KEY
+	midtrans.Environment = midtrans.Sandbox
+	log.Println(cfg.MIDTRANS_SERVER_KEY)
 	newUUID := uuid.New()
 	order := string(newUUID.String())
-	c.New(config.InitConfig().MIDTRANS_SERVER_KEY, midtrans.Sandbox)
-	req := &coreapi.ChargeReq{
+
+	chargReq := &coreapi.ChargeReq{
 		TransactionDetails: midtrans.TransactionDetails{
 			OrderID:  order,
 			GrossAmt: int64(amount),
@@ -23,9 +26,17 @@ func MidtransTokenCore(bank string, amount int) (*coreapi.ChargeResponse, *midtr
 		BankTransfer: &coreapi.BankTransferDetails{
 			Bank: midtrans.Bank(bank),
 		},
+		PaymentType: coreapi.CoreapiPaymentType("bank_transfer"),
+		Items: &[]midtrans.ItemDetails{
+			{
+				Name:  "Top Up",
+				Price: int64(amount),
+				Qty:   1,
+			},
+		},
 	}
 
-	resp, err := coreapi.ChargeTransaction(req)
+	resp, err := coreapi.ChargeTransaction(chargReq)
 	if err != nil {
 		log.Println("midtrans error", err.Error())
 		return nil, err
@@ -63,10 +74,12 @@ func MidtransCreateToken(orderID string, amount int, namaCustomer string, email 
 }
 
 func MidtransStatus(orderID string) (Status string) {
-	var c = coreapi.Client{}
-	c.New(config.InitConfig().MIDTRANS_SERVER_KEY, midtrans.Sandbox)
+	cfg := config.InitConfig()
+	midtrans.ServerKey = cfg.MIDTRANS_SERVER_KEY
+	midtrans.Environment = midtrans.Sandbox
+	log.Println(cfg.MIDTRANS_SERVER_KEY)
 
-	transactionStatusResp, e := c.CheckTransaction(orderID)
+	transactionStatusResp, e := coreapi.CheckTransaction(orderID)
 	if e != nil {
 		status := "Pending"
 		return status

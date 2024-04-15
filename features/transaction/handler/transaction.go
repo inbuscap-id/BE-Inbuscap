@@ -52,8 +52,7 @@ func (at *TransactionHandler) AddTransaction() echo.HandlerFunc {
 		response.UserId = result.UserId
 		response.Amount = result.Amount
 		response.Status = result.Status
-		response.Url = result.Url
-		response.Token = result.Token
+
 		response.CreatedAt = result.CreatedAt
 
 		return c.JSON(helper.ResponseFormat(http.StatusCreated, "transaction is created", response))
@@ -72,16 +71,35 @@ func (at *TransactionHandler) AddCoreTransaction() echo.HandlerFunc {
 		if err != nil {
 			c.Logger().Error("terjadi kesalahan", err.Error())
 			if strings.Contains(err.Error(), "duplicate") {
-				return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorGeneralDatabase))
+				return c.JSON(helper.ResponseFormat(http.StatusInternalServerError, helper.ErrorGeneralDatabase))
+
+			}
+			if strings.Contains(err.Error(), "midtrans") {
+				return c.JSON(helper.ResponseFormat(http.StatusInternalServerError, "there's a problem in the server"))
 
 			}
 			log.Println(err.Error())
 
-			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorDatabaseNotFound))
+			return c.JSON(helper.ResponseFormat(http.StatusNotFound, helper.ErrorDatabaseNotFound))
 
 		}
+		// parsing result
+		var response = CoreTransactionRes{
+			OrderID:   result.OrderID,
+			Amount:    result.GrossAmount,
+			Status:    result.TransactionStatus,
+			CreatedAt: result.TransactionTime,
+		}
 
-		return c.JSON(helper.ResponseFormat(http.StatusCreated, "transaction is created", result))
+		if result.PermataVaNumber != "" {
+			response.VaNumbers = map[string]string{
+				"bank":      "permata",
+				"va_number": result.PermataVaNumber,
+			}
+		} else {
+			response.VaNumbers = result.VaNumbers
+		}
+		return c.JSON(helper.ResponseFormat(http.StatusCreated, "transaction is created", response))
 	}
 }
 
@@ -108,8 +126,7 @@ func (ct *TransactionHandler) CheckTransaction() echo.HandlerFunc {
 		response.UserId = result.UserId
 		response.Amount = result.Amount
 		response.Status = result.Status
-		response.Url = result.Url
-		response.Token = result.Token
+
 		response.CreatedAt = result.CreatedAt
 
 		return c.JSON(helper.ResponseFormat(http.StatusCreated, "transaction is retireved", response))
