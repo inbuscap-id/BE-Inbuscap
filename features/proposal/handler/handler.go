@@ -55,6 +55,7 @@ func (ct *controller) Create() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
 		}
+
 		newProposal := proposal.Proposal{
 			Title:       c.FormValue("title"),
 			Description: c.FormValue("description"),
