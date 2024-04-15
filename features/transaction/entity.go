@@ -35,6 +35,8 @@ type Controller interface {
 	AddCoreTransaction() echo.HandlerFunc
 	CheckTransaction() echo.HandlerFunc
 	CallBack() echo.HandlerFunc
+	// Withdraw() echo.HandlerFunc
+
 }
 
 type Repository interface {
@@ -44,6 +46,7 @@ type Repository interface {
 	CheckTransaction(orderID string) (*Transaction, error)
 	CheckTransactionById(id uint) (*Transaction, error)
 	Update(item Transaction) (*Transaction, error)
+	//withdraw
 }
 
 type Service interface {
@@ -52,4 +55,5 @@ type Service interface {
 
 	CheckTransaction(transactionID uint) (Transaction, error)
 	CallBack(noInvoice string) (Transaction, error)
+	//withdraw
 }

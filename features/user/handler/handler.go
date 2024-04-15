@@ -227,7 +227,7 @@ func (ct *controller) GetVerifications() echo.HandlerFunc {
 			payloads = append(payloads, payload)
 		}
 		if paginasi.Page > paginasi.TotalPages {
-			return c.JSON(helper.ResponseFormatArray(http.StatusNotFound, "index out of range", payloads, paginasi))
+			return c.JSON(helper.ResponseFormat(http.StatusNotFound, "index out of range", []GetVerificationsResponse{}))
 
 		}
 		return c.JSON(helper.ResponseFormatArray(http.StatusOK, "User list sucessfully retrieved", payloads, paginasi))

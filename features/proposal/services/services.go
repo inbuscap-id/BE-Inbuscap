@@ -151,7 +151,7 @@ func (s *services) GetVerifications(page int, status int) ([]proposal.Proposal, 
 
 	listProposal, totalPage, users, err := s.m.GetVerifications(page, status)
 	if err != nil {
-		return []proposal.Proposal{}, 0, nil, errors.New(helper.ErrorGeneralDatabase)
+		return []proposal.Proposal{}, 0, nil, err
 	}
 	return listProposal, totalPage, users, nil
 }
