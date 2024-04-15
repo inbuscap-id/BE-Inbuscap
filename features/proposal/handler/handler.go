@@ -89,7 +89,7 @@ func (ct *controller) Update() echo.HandlerFunc {
 			if strings.Contains(err.Error(), "unsupport") {
 				return c.JSON(helper.ResponseFormat(http.StatusUnsupportedMediaType, helper.ErrorUserInputFormat, nil))
 			}
-			fileImage = nil
+			fileProposal = nil
 		}
 
 		token, ok := c.Get("user").(*jwt.Token)
