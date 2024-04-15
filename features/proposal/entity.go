@@ -17,6 +17,8 @@ type Controller interface {
 	Delete() echo.HandlerFunc
 	Archive() echo.HandlerFunc
 	GetVerifications() echo.HandlerFunc
+	GetVerification() echo.HandlerFunc
+
 	ChangeStatus() echo.HandlerFunc
 }
 
@@ -29,6 +31,8 @@ type Model interface {
 	Delete(id string, prososal_id string) error
 	Archive() error
 	GetVerifications(page int, status int) ([]Proposal, int, []string, error)
+	GetVerification(proposalId uint) (Proposal, string, error)
+
 	ChangeStatus(id uint, status int) error
 }
 
@@ -41,6 +45,8 @@ type Services interface {
 	Delete(token *jwt.Token, prososal_id string) error
 	Archive() error
 	GetVerifications(page int, status int) ([]Proposal, int, []string, error)
+	GetVerification(proposalId uint) (Proposal, string, error)
+
 	ChangeStatus(id uint, status int) error
 }
 

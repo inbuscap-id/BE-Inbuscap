@@ -124,3 +124,19 @@ func (m *model) ChangeStatus(id uint, status int) error {
 
 	return err
 }
+
+func (m *model) GetVerification(proposalId uint) (proposal.Proposal, string, error) {
+	var result proposal.Proposal
+	err := m.connection.Where("id = ?", proposalId).First(&result).Error
+	if err != nil {
+		log.Println("error mengambil proposal", err.Error())
+		return proposal.Proposal{}, "", err
+	}
+	var user proposal.User
+	err = m.connection.Where("id = ?", result.User_id).First(&user).Error
+	if err != nil {
+		log.Println("error mengambil user", err.Error())
+		return proposal.Proposal{}, "", err
+	}
+	return result, user.Fullname, nil
+}

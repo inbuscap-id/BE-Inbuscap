@@ -84,9 +84,10 @@ func (at *TransactionHandler) AddCoreTransaction() echo.HandlerFunc {
 
 		}
 		// parsing result
+		amt, _ := strconv.ParseFloat(result.GrossAmount, 64)
 		var response = CoreTransactionRes{
 			OrderID:   result.OrderID,
-			Amount:    result.GrossAmount,
+			Amount:    int(amt),
 			Status:    result.TransactionStatus,
 			CreatedAt: result.TransactionTime,
 		}
@@ -157,7 +158,13 @@ func (cb *TransactionHandler) CallBack() echo.HandlerFunc {
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorGeneralServer))
 
 		}
-		return c.JSON(helper.ResponseFormat(http.StatusOK, "midtrans callback successful", result))
+		var response = TransactionRes{
+			OrderID:   result.OrderID,
+			Amount:    result.Amount,
+			Status:    result.Status,
+			CreatedAt: result.CreatedAt,
+		}
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "midtrans callback successful", response))
 
 	}
 }

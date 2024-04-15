@@ -52,11 +52,6 @@ func (ct *controller) Create() echo.HandlerFunc {
 			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
 		}
 
-		share, err := strconv.Atoi(c.FormValue("share"))
-		if err != nil {
-			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
-		}
-
 		newProposal := proposal.Proposal{
 			Title:       c.FormValue("title"),
 			Description: c.FormValue("description"),
@@ -142,6 +137,27 @@ func (ct *controller) GetAll() echo.HandlerFunc {
 				},
 			},
 		))
+	}
+}
+
+func (ct *controller) GetVerification() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, err := strconv.ParseUint((c.Param("proposal_id")), 10, 32)
+
+		if err != nil {
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+		}
+
+		data, name, err := ct.s.GetVerification(uint(id))
+		if err != nil {
+			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
+		}
+
+		var dataResponse VerificationResponse
+		helper.ConvertStruct(&data, &dataResponse)
+		dataResponse.Document = data.Document
+		dataResponse.Owner = name
+		return c.JSON(helper.ResponseFormat(http.StatusOK, "success get detail post", dataResponse))
 	}
 }
 
