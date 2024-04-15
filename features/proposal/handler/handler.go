@@ -258,6 +258,9 @@ func (ct *controller) GetVerifications() echo.HandlerFunc {
 		}
 		data, total_pages, users, err := ct.s.GetVerifications(page, status)
 		if err != nil {
+			if strings.Contains(err.Error(), "found") {
+				return c.JSON(helper.ResponseFormat(http.StatusNotFound, "no record matches the requirement", []VerificationResponse{}))
+			}
 			return c.JSON(helper.ResponseFormat(helper.ErrorCode(err), err.Error()))
 		}
 		var paginasi helper.Pagination
@@ -274,7 +277,7 @@ func (ct *controller) GetVerifications() echo.HandlerFunc {
 
 		paginasi.TotalPages = total_pages
 		if page > total_pages {
-			return c.JSON(helper.ResponseFormat(http.StatusNotFound, "index out of bounds"))
+			return c.JSON(helper.ResponseFormat(http.StatusNotFound, "index out of bounds", []VerificationResponse{}, paginasi))
 
 		}
 		return c.JSON(helper.ResponseFormatArray(http.StatusOK, "data retrieved successfully", dataResponse, paginasi))
