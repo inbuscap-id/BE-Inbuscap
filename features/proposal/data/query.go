@@ -101,7 +101,7 @@ func (m *model) GetVerifications(page int, status int) ([]proposal.Proposal, int
 	if page < 1 {
 		page = 1
 	}
-	if status == 1 {
+	if status < 0 {
 		status = 0
 	}
 	var result []proposal.Proposal
