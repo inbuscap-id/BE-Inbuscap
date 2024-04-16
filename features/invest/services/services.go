@@ -49,7 +49,7 @@ func (s *services) SendCapital(token *jwt.Token, proposal_id uint, amount int) e
 	// Send data to database
 	err = s.m.SendCapital(newInvest)
 	if err != nil {
-		return errors.New(helper.ErrorGeneralDatabase)
+		return err
 	}
 
 	// Finish

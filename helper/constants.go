@@ -10,6 +10,7 @@ const (
 	ErrorInvalidValidate   = "validation is invalid"
 	ErrorAccountActivation = "you need to verify your account"
 	ErrorAuthorization     = "you do not have permission"
+	ErrorUserInputAmount   = "amount > saldo"
 	// Server
 	ErrorGeneralServer = "an error occurred in the server process"
 
@@ -30,6 +31,8 @@ func ErrorCode(e error) int {
 	case ErrorUserCredential:
 		return http.StatusUnauthorized // 401
 	case ErrorInvalidValidate:
+		return http.StatusBadRequest // 400
+	case ErrorUserInputAmount:
 		return http.StatusBadRequest // 400
 
 	// Server
