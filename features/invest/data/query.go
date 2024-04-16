@@ -20,7 +20,22 @@ func New(db *gorm.DB) invest.Model {
 
 func (m *model) SendCapital(data invest.Investment) error {
 	data.Status = 1
-	err := m.connection.Create(&data).Error
+	var saldo int
+	err := m.connection.Table("users").Select("users.saldo as saldo").Where("users.id = ?", data.User_id).Scan(&saldo).Error
+	if err != nil {
+		return errors.New(helper.ErrorGeneralDatabase)
+	}
+
+	if saldo < data.Amount {
+		return errors.New(helper.ErrorUserInputAmount)
+	}
+
+	err = m.connection.Create(&data).Error
+	if err != nil {
+		return errors.New(helper.ErrorGeneralDatabase)
+	}
+
+	err = m.connection.Model(&invest.User{}).Where("id = ?", data.User_id).Update("saldo", saldo-data.Amount).Error
 	if err != nil {
 		return errors.New(helper.ErrorGeneralDatabase)
 	}
@@ -39,6 +54,17 @@ func (m *model) CancelSendCapital(data invest.Investment) error {
 	if err != nil {
 		return errors.New(helper.ErrorGeneralDatabase)
 	}
+
+	var saldo int
+	err = m.connection.Table("users").Select("users.saldo as saldo").Where("users.id = ?", data.User_id).Scan(&saldo).Error
+	if err != nil {
+		return errors.New(helper.ErrorGeneralDatabase)
+	}
+	err = m.connection.Model(&invest.User{}).Where("id = ?", data.User_id).Update("saldo", saldo+amount).Error
+	if err != nil {
+		return errors.New(helper.ErrorGeneralDatabase)
+	}
+
 	return nil
 }
 
