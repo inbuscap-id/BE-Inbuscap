@@ -34,6 +34,9 @@ func (m *model) Update(user_id string, proposal_id string, data proposal.Proposa
 	if data.Document != "" {
 		selectUpdate = append(selectUpdate, "document")
 	}
+	if data.Description != "" {
+		selectUpdate = append(selectUpdate, "description")
+	}
 	if data.Capital != 0 {
 		selectUpdate = append(selectUpdate, "capital")
 	}
