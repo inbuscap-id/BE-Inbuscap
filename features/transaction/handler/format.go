@@ -17,11 +17,12 @@ type TransactionRes struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 type CoreTransactionRes struct {
-	OrderID   string      `json:"order_id"`
-	Amount    int         `json:"amount"`
-	Status    string      `json:"status"`
-	VaNumbers interface{} `json:"va_numbers"`
-	CreatedAt string      `json:"created_at"`
+	OrderID    string      `json:"order_id"`
+	Amount     int         `json:"amount"`
+	Status     string      `json:"status"`
+	VaNumbers  interface{} `json:"va_numbers"`
+	CreatedAt  string      `json:"created_at"`
+	ExpiryTime string      `json:"expiry_time"`
 }
 
 type CallBack struct {

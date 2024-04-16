@@ -86,10 +86,11 @@ func (at *TransactionHandler) AddCoreTransaction() echo.HandlerFunc {
 		// parsing result
 		amt, _ := strconv.ParseFloat(result.GrossAmount, 64)
 		var response = CoreTransactionRes{
-			OrderID:   result.OrderID,
-			Amount:    int(amt),
-			Status:    result.TransactionStatus,
-			CreatedAt: result.TransactionTime,
+			OrderID:    result.OrderID,
+			Amount:     int(amt),
+			Status:     result.TransactionStatus,
+			CreatedAt:  result.TransactionTime,
+			ExpiryTime: result.ExpiryTime,
 		}
 
 		if result.PermataVaNumber != "" {

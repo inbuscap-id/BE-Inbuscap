@@ -315,3 +315,16 @@ func (ct *controller) ChangeStatus() echo.HandlerFunc {
 
 	}
 }
+
+func (ct *controller) GetUpload() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		filename := c.Param("filename")
+		id := c.Param("id")
+		if filename == "" {
+			log.Println("error mengambil filepath")
+			return c.JSON(helper.ResponseFormat(http.StatusBadRequest, helper.ErrorUserInput))
+		}
+
+		return c.File("uploads/" + id + "/" + filename)
+	}
+}

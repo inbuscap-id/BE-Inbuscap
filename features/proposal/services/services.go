@@ -35,8 +35,9 @@ func (s *services) Create(token *jwt.Token, image *multipart.FileHeader, documen
 		return err
 	}
 
-	documentURL, err := utils.UploadImage(document)
+	documentURL, err := helper.UploadDoc(document, id_string)
 	if err != nil {
+
 		return err
 	}
 
@@ -66,7 +67,7 @@ func (s *services) Update(token *jwt.Token, proposal_id string, image *multipart
 
 	var documentURL string
 	if document != nil {
-		documentURL, err = utils.UploadImage(document)
+		documentURL, err = helper.UploadDoc(document, user_id)
 		if err != nil {
 			return err
 		}

@@ -18,8 +18,8 @@ type Controller interface {
 	Archive() echo.HandlerFunc
 	GetVerifications() echo.HandlerFunc
 	GetVerification() echo.HandlerFunc
-
 	ChangeStatus() echo.HandlerFunc
+	GetUpload() echo.HandlerFunc
 }
 
 type Model interface {
