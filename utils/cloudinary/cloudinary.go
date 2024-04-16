@@ -25,7 +25,7 @@ func UploadImage(image *multipart.FileHeader) (string, error) {
 		return "", err
 	}
 
-	resp, err := cld.Upload.Upload(context.Background(), src, uploader.UploadParams{})
+	resp, err := cld.Upload.Upload(context.Background(), src, uploader.UploadParams{Folder: env.Folder, ResourceType: "auto"})
 	if err != nil {
 		log.Println("cloudinary upload error:", err.Error())
 		return "", err
