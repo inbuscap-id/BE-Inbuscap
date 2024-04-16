@@ -3,6 +3,7 @@ package services
 import (
 	"BE-Inbuscap/features/report"
 	"BE-Inbuscap/helper"
+	"BE-Inbuscap/middlewares"
 	utils "BE-Inbuscap/utils/cloudinary"
 	"errors"
 	"mime/multipart"
@@ -24,6 +25,8 @@ func Service(model report.Model) report.Services {
 }
 
 func (s *services) AddReport(token interface{}, proposal_id string, document *multipart.FileHeader) error {
+	userID := middlewares.DecodeToken(token)
+
 	proposalID, err := strconv.ParseUint(proposal_id, 10, 32)
 	if err != nil {
 		return errors.New(helper.ErrorUserInput)
@@ -39,14 +42,14 @@ func (s *services) AddReport(token interface{}, proposal_id string, document *mu
 		Document:    documentURL,
 	}
 
-	return s.m.AddReport(data_report)
+	return s.m.AddReport(data_report, userID)
 }
 
 func (s *services) Edit() error {
 	return nil
 }
 
-func (s *services) GetAll() error {
+func (s *services) GetAllReport() error {
 	return nil
 }
 

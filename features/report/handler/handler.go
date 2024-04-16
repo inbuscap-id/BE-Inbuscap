@@ -30,7 +30,7 @@ func (ct *controller) Edit() echo.HandlerFunc {
 	}
 }
 
-func (ct *controller) GetAll() echo.HandlerFunc {
+func (ct *controller) GetAllReport() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return c.JSON(helper.ResponseFormat(http.StatusCreated, "success create post", nil))
 	}

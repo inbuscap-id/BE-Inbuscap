@@ -10,16 +10,16 @@ import (
 type Controller interface {
 	AddReport() echo.HandlerFunc
 	Edit() echo.HandlerFunc
-	GetAll() echo.HandlerFunc
+	GetAllReport() echo.HandlerFunc
 	GetDetail() echo.HandlerFunc
 	Delete() echo.HandlerFunc
 	Archive() echo.HandlerFunc
 }
 
 type Model interface {
-	AddReport(data Report) error
+	AddReport(data Report, userID string) error
 	Edit() error
-	GetAll() error
+	GetAllReport(proposal_id string) (Proposal, error)
 	GetDetail() error
 	Delete() error
 	Archive() error
@@ -28,7 +28,7 @@ type Model interface {
 type Services interface {
 	AddReport(token interface{}, proposal_id string, document *multipart.FileHeader) error
 	Edit() error
-	GetAll() error
+	GetAllReport() error
 	GetDetail() error
 	Delete() error
 	Archive() error
