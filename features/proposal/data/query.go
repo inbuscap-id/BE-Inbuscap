@@ -80,7 +80,7 @@ func (m *model) GetAllMy(page int, user_id string) ([]proposal.Proposal, int, er
 
 func (m *model) GetDetail(id_proposal string) (proposal.Proposal, error) {
 	var result proposal.Proposal
-	err := m.connection.Select("*, proposals.id as id, SUM(investments.amount) AS collected").Preload("User").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Where("proposals.id = ?", id_proposal).Find(&result).Error
+	err := m.connection.Select("proposals.*, SUM(investments.amount) AS collected").Preload("User").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Where("proposals.id = ?", id_proposal).Find(&result).Error
 	return result, err
 }
 
