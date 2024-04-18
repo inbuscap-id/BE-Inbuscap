@@ -59,7 +59,7 @@ func (m *model) GetAll(page int) ([]proposal.Proposal, int, error) {
 		page = 1
 	}
 	var result []proposal.Proposal
-	err := m.connection.Select("proposals.*, SUM(investments.amount) AS collected").Group("proposals.id").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Limit(10).Offset(page*10 - 10).Find(&result).Error
+	err := m.connection.Select("proposals.*, SUM(investments.amount) AS collected").Group("proposals.id").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Order("proposals.created_at DESC").Limit(10).Offset(page*10 - 10).Find(&result).Error
 
 	var numberOfProposals int
 	m.connection.Table("proposals").Select("COUNT(ID)").Where("`proposals`.`deleted_at` IS NULL").Scan(&numberOfProposals)
@@ -71,7 +71,7 @@ func (m *model) GetAllMy(page int, user_id string) ([]proposal.Proposal, int, er
 		page = 1
 	}
 	var result []proposal.Proposal
-	err := m.connection.Select("proposals.*, SUM(investments.amount) AS collected").Group("proposals.id").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Where("proposals.user_id = ?", user_id).Limit(10).Offset(page*10 - 10).Find(&result).Error
+	err := m.connection.Select("proposals.*, SUM(investments.amount) AS collected").Group("proposals.id").Joins("LEFT JOIN investments ON investments.proposal_id = proposals.id").Where("proposals.user_id = ?", user_id).Order("proposals.created_at DESC").Limit(10).Offset(page*10 - 10).Find(&result).Error
 
 	var numberOfProposals int
 	m.connection.Table("proposals").Select("COUNT(ID)").Where("`proposals`.`deleted_at` IS NULL").Scan(&numberOfProposals)
